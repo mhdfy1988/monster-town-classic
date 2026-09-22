@@ -1,0 +1,29 @@
+/* 背包旅行箱样板：统一铭牌、护角、内衬和像素字体。 */
+.goods-art .supply-bitmap{width:80px;height:80px;object-fit:contain;image-rendering:pixelated}
+.trade-inspect .item-hero .supply-bitmap{width:145px;height:145px;object-fit:contain;image-rendering:pixelated}
+@media(max-width:560px){.goods-art .supply-bitmap{width:64px;height:64px}.trade-inspect .item-hero .supply-bitmap{width:110px;height:110px}}
+@font-face{font-family:Zpix;src:url('/assets/fonts/zpix.woff2') format('woff2');font-weight:400;font-display:swap}
+.pixel-bag,.pixel-bag button,.pixel-bag h2,.pixel-bag h3,.pixel-bag b,.pixel-bag p{font-family:Zpix,sans-serif!important;font-weight:400!important}
+.rpg-shell .rpg-panel.pixel-bag{position:relative;width:min(860px,94vw);padding:26px;background:#796044;border:4px solid #302b23;border-radius:2px;clip-path:none;color:#f2e6be;box-shadow:0 0 0 2px #d6bb81,0 8px #302b23,0 12px #161e1b66,inset 0 0 0 3px #e0c38b,inset 0 0 0 7px #a1875e;overflow:visible}
+.rpg-shell .pixel-bag:before,.rpg-shell .pixel-bag:after{content:'';position:absolute;pointer-events:none;bottom:2px;width:23px;height:23px;border:2px solid #382d22;background:#c7ae76;box-shadow:inset 0 0 0 3px #8c714c,inset 0 0 0 5px #e7ce95;clip-path:polygon(0 0,70% 0,100% 30%,100% 100%,0 100%)}
+.rpg-shell .pixel-bag:before{left:2px}.rpg-shell .pixel-bag:after{right:2px;transform:scaleX(-1)}
+.rpg-shell .pixel-bag .partner-heading{margin:0 0 22px;padding:0 48px 16px 0;border-bottom:3px solid #3f3024;box-shadow:0 1px #ba9a67;gap:12px;min-height:62px}
+.rpg-shell .pixel-bag .partner-heading h2{margin:0;padding:10px 22px;background:#f0e7c9;color:#343729;border:2px solid #322c23;box-shadow:inset 0 0 0 2px #c4b68d,0 4px #3e3124;font-size:24px;line-height:1.3;letter-spacing:2px;clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0 calc(100% - 10px),0 10px)}
+.rpg-shell .pixel-bag .partner-heading h2:before{display:none}
+.rpg-shell .pixel-bag .bag-wallet{margin:0;gap:8px;padding:7px 12px;background:#493b2c;border:2px solid #b69a64;box-shadow:inset 0 2px #30291f;color:#ffe1a2}
+.rpg-shell .pixel-bag .bag-wallet b{font-size:24px;text-shadow:2px 2px #30291f}.pixel-bag .pixel-coin,.pixel-bag .pixel-coin svg{width:24px;height:24px}
+.pixel-bag .inventory-layout{gap:18px}
+.rpg-shell .pixel-bag .item-pocket{gap:12px;min-height:310px;border:3px solid #352e25;background:repeating-linear-gradient(0deg,#3d4940 0 3px,#404c42 3px 6px);box-shadow:0 0 0 2px #b29a68,inset 4px 4px #29372f,inset -3px -3px #66705a}
+.rpg-shell .pixel-bag .item-tile{border:2px solid #29332c;background:#596451;box-shadow:inset 2px 2px #829078,inset -2px -2px #364231}
+.rpg-shell .pixel-bag .item-tile.selected{border-color:#ffdc83;background:#7c7951;outline:1px solid #362c23;box-shadow:inset 2px 2px #c4b274,inset -2px -2px #585137,0 0 0 2px #d5b265}
+.rpg-shell .pixel-bag .item-tile:hover{background:#758365}.pixel-bag .item-count{background:#29382e;color:#ffe6ad;font-size:12px;line-height:16px}
+.rpg-shell .pixel-bag .item-inspect{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 18px 22px;background:#e8dfbf;border:3px solid #3e3529;border-radius:0;color:#394332;box-shadow:0 0 0 2px #b9a16b,inset 3px 3px #fff2ce,inset -3px -3px #c0b48e}
+.pixel-bag .item-hero{display:flex;align-items:center;justify-content:center;width:100%}
+.rpg-shell .pixel-bag .item-inspect h3{font-size:24px;line-height:1.4;margin:12px 0 8px;color:#354534;text-shadow:1px 1px #fff8dc}
+.rpg-shell .pixel-bag .item-inspect p{font-size:12px;line-height:2;color:#625c43;min-height:36px;margin:0 0 20px}
+.rpg-shell .pixel-bag .rpg-action{font-size:16px;line-height:1.5;padding:8px 20px;border:2px solid #343528;background:#59745a;color:#fff0c5;box-shadow:inset 2px 2px #99ad77,inset -2px -2px #354e3d,0 3px #3c3427}
+.rpg-shell .pixel-bag .rpg-action:active{transform:translateY(2px)}
+.rpg-shell .pixel-bag .rpg-action:disabled{background:#c1b99a;color:#77745e;box-shadow:inset 2px 2px #e2d8b6,inset -2px -2px #a89f81;border-color:#aaa084}
+.rpg-shell .pixel-bag .panel-close{top:22px!important;right:20px!important;width:34px;height:34px;border:2px solid #302c24!important;background:#b49358!important;color:#fff1c5!important;box-shadow:inset 2px 2px #f0d397,inset -2px -2px #775b36,0 3px #3d3023!important}
+.pixel-bag button:focus-visible{outline:2px solid #fff0a5;outline-offset:4px}.pixel-bag .bag-empty{color:#ded8b8!important}
+@media(max-width:560px){.rpg-shell .rpg-panel.pixel-bag{padding:18px 12px;width:94vw}.rpg-shell .pixel-bag .partner-heading{padding:0 34px 12px 0;gap:6px;min-height:48px;margin-bottom:16px}.rpg-shell .pixel-bag .partner-heading h2{font-size:18px;letter-spacing:0;padding:8px 10px}.rpg-shell .pixel-bag .bag-wallet{padding:5px;gap:3px}.rpg-shell .pixel-bag .bag-wallet b{font-size:18px}.pixel-bag .pixel-coin,.pixel-bag .pixel-coin svg{width:20px;height:20px}.rpg-shell .pixel-bag .panel-close{top:23px!important;right:12px!important;width:26px;height:26px}.rpg-shell .pixel-bag .item-pocket{gap:8px;min-height:290px}.rpg-shell .pixel-bag .item-inspect{padding:10px 8px}.rpg-shell .pixel-bag .rpg-action{font-size:12px;padding:8px 12px}}

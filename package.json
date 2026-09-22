@@ -1,0 +1,33 @@
+{
+  "name": "monster-town-classic",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "prepare:font": "node scripts/prepare-font.cjs",
+    "predev": "npm run prepare:font",
+    "dev": "vite",
+    "prebuild": "npm run prepare:font",
+    "build": "tsc && vite build",
+    "predeploy": "npm run test && npm run check:assets && npm run build",
+    "deploy": "gh-pages -d dist",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "check:assets": "node scripts/check-assets.cjs",
+    "qa:deployment": "node scripts/check-deployment.cjs",
+    "qa:audio": "node scripts/check-audio.cjs",
+    "qa:movement-capture": "node scripts/check-movement-capture.cjs"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "gh-pages": "^6.3.0",
+    "playwright": "^1.63.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.0"
+  },
+  "dependencies": {
+    "page-flip": "2.0.7",
+    "phaser": "3.90.0"
+  }
+}

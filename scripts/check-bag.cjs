@@ -1,0 +1,25 @@
+const {chromium}=require('playwright');
+(async()=>{const browser=await chromium.launch({ headless: true, channel: 'chrome' });try{
+ const page=await browser.newPage({viewport:{width:1280,height:800}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('http://127.0.0.1:4190/?qa=1');await page.waitForFunction(()=>window.__rpg);
+ await page.evaluate(async()=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.close();r.atTitle=false;r.save=m.newGame();r.save.team=[m.makeMonster(1,5)];r.save.potions=1;r.save.tonics=2;r.save.remedies=0;r.save.team[0].hp=1;r.bagMenu();});
+ if(await page.locator('[data-item]').count()!==3)throw Error('zero items visible');
+ await page.locator('[data-item="tonics"]').click();if(await page.locator('.item-inspect h3').textContent()!=='力量药剂')throw Error('selection');
+ await page.screenshot({path:'assets/qa/book/bag.png'});
+ await page.evaluate(async()=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.save.team.push(m.makeMonster(2,5),m.makeMonster(0,5));r.save.team[1].hp=2;});
+ await page.locator('[data-item="potions"]').click();await page.locator('#use-item').click();
+ if(!await page.locator('#confirm-heal').isDisabled())throw Error('target auto-selected');
+ if(!await page.locator('[data-heal-target="2"]').isDisabled())throw Error('full hp selectable');
+ await page.locator('[data-heal-target="1"]').click();await page.locator('#cancel-heal').click();
+ if(!await page.evaluate(()=>window.__rpg.save.potions===1&&window.__rpg.save.team[1].hp===2))throw Error('cancel consumed');
+ await page.locator('#use-item').click();await page.locator('[data-heal-target="1"]').click();
+ await page.screenshot({path:'assets/qa/book/bag-target.png'});
+ await page.locator('#confirm-heal').click();
+ if(!await page.evaluate(()=>window.__rpg.save.team[0].hp===1&&window.__rpg.save.team[1].hp===27))throw Error('wrong target healed');
+ if(await page.locator('[data-item="potions"]').count())throw Error('consumed item visible');
+ await page.setViewportSize({width:390,height:844});await page.screenshot({path:'assets/qa/book/bag-mobile.png'});
+ if(!await page.evaluate(()=>{const r=document.querySelector('.inventory-panel').getBoundingClientRect();return r.left>=0&&r.right<=innerWidth;}))throw Error('overflow');
+ await page.evaluate(()=>{const r=window.__rpg;r.save.balls=0;r.save.potions=0;r.save.tonics=0;r.save.remedies=0;r.bagMenu();});
+ if(await page.locator('[data-item]').count()||!await page.locator('.bag-empty').count())throw Error('empty bag');
+ if(errors.length)throw Error(errors.join('\n'));console.log('PASS bag selection, zero filtering, consumption, mobile, empty bag');
+ }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

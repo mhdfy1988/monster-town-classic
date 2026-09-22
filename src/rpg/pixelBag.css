@@ -1,0 +1,27 @@
+/* 背包样板独立作用域：其他窗口待视觉验收后再迁移。 */
+.pixel-bag .item-art .potion-artwork{display:block;width:64px;height:64px;object-fit:contain;image-rendering:pixelated}
+.pixel-bag .item-hero .potion-artwork{display:block;width:160px;height:160px;object-fit:contain;image-rendering:pixelated}
+@media(max-width:560px){.pixel-bag .item-hero .potion-artwork{width:128px;height:128px}}
+.rpg-shell .rpg-panel.pixel-bag{--edge:#586348;background:#eee5c4;border:0;border-radius:0;box-shadow:none;padding:28px;clip-path:polygon(0 12px,4px 12px,4px 4px,12px 4px,12px 0,calc(100% - 12px) 0,calc(100% - 12px) 4px,calc(100% - 4px) 4px,calc(100% - 4px) 12px,100% 12px,100% calc(100% - 12px),calc(100% - 4px) calc(100% - 12px),calc(100% - 4px) calc(100% - 4px),calc(100% - 12px) calc(100% - 4px),calc(100% - 12px) 100%,12px 100%,12px calc(100% - 4px),4px calc(100% - 4px),4px calc(100% - 12px),0 calc(100% - 12px));outline:none;background-image:linear-gradient(var(--edge),var(--edge)),linear-gradient(#fff4d0,#fff4d0),linear-gradient(#c0b68e,#c0b68e);background-size:100% 4px,100% 4px,100% 8px;background-position:top,left 0 top 8px,bottom;background-repeat:no-repeat;box-shadow:inset 4px 0 var(--edge),inset -4px 0 var(--edge),inset 8px 0 #fff4d0,inset -8px 0 #c0b68e}
+.pixel-bag,.pixel-bag button{font-family:'Microsoft YaHei',sans-serif}
+.rpg-shell .pixel-bag .partner-heading{border-bottom:2px solid #c3bd98;padding-bottom:16px}
+.pixel-bag .partner-heading h2{font-family:'Microsoft YaHei',sans-serif;font-size:21px;font-weight:bold;letter-spacing:3px}
+.rpg-shell .pixel-bag .partner-heading h2:before{content:'';display:inline-block;width:8px;height:8px;background:#b08c44;box-shadow:4px -4px #d1b46d;margin-right:12px}
+.pixel-bag .bag-wallet b{font-family:Consolas,monospace;font-size:24px;text-shadow:none}
+.pixel-bag .pixel-coin,.pixel-bag .pixel-coin svg{display:block;width:32px;height:32px}
+.rpg-shell .pixel-bag .item-pocket{background:#c7cdb0;border:4px solid #9ba887;border-radius:0;box-shadow:inset 4px 4px #b2bd9a,inset -4px -4px #dce1c3;grid-template-columns:repeat(auto-fill,76px);padding:16px}
+.rpg-shell .pixel-bag .item-tile{border:0;border-radius:0;background:#e1dfbd;box-shadow:inset 3px 3px #f7edca,inset -3px -3px #aab08a;transition:none}
+.rpg-shell .pixel-bag .item-tile.selected{background:#e7d797;outline:3px solid #9a763c;outline-offset:0;box-shadow:inset 3px 3px #fff0b6,inset -3px -3px #c1a45d}
+.rpg-shell .pixel-bag .item-tile:hover{transform:none;background:#f0e4b5}
+.pixel-bag .item-count{border-radius:0;background:#53664a;color:#fff1c5;font-family:Consolas,monospace}
+.pixel-bag .item-hero{height:160px;background:none}
+.pixel-bag .item-hero svg{width:160px;height:160px;filter:none;image-rendering:pixelated}
+.pixel-bag .item-art svg{image-rendering:pixelated}
+.rpg-shell .pixel-bag .rpg-action{border:0;border-radius:0;background:#d8dfb8;box-shadow:inset 3px 3px #f7f0c9,inset -3px -3px #879b72,0 3px #53694d;color:#3f5840;padding:12px 20px;transition:none}
+.rpg-shell .pixel-bag .rpg-action:disabled{background:#dcd9bc;color:#999d83;box-shadow:inset 3px 3px #e8e3c7,inset -3px -3px #c2c4a7}
+.pixel-bag button:focus-visible{outline:3px solid #a17f3d;outline-offset:3px}
+.rpg-shell .pixel-bag .panel-close{border-radius:0!important;background:#ccd6af!important;box-shadow:inset 2px 2px #f8efc9,inset -2px -2px #95a77d!important;border:0!important}
+.pixel-bag .potion-target{border-radius:0;background:#d9dfbf;box-shadow:inset -2px -2px #b5c19c}
+.pixel-bag .potion-target.selected{border-color:#a58b4b;box-shadow:inset 2px 2px #fff0b9,inset -2px -2px #b6a16b;background:#e8dcad}
+.pixel-bag .partner-hp,.pixel-bag .partner-hp i{border-radius:0}
+@media(max-width:560px){.rpg-shell .rpg-panel.pixel-bag{padding:24px 16px}.pixel-bag .partner-heading h2{font-size:17px;letter-spacing:1px}.rpg-shell .pixel-bag .item-pocket{padding:8px;grid-template-columns:repeat(auto-fill,64px)}.pixel-bag .item-hero{height:128px}.pixel-bag .item-hero svg{width:128px;height:128px}.pixel-bag .item-art,.pixel-bag .item-art svg{width:64px;height:64px}}

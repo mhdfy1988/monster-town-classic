@@ -1,0 +1,11 @@
+import {describe,it,expect} from 'vitest';
+import {newGame,makeMonster,unlockForm,unlockedForms,evolveMonster,validSave,dexEntries} from './model';
+import {freshState,combatDamage,useCombatItem} from './combat';
+describe('战斗与独立形态图鉴',()=>{
+ it('24 个形态独立编号，预览不解锁，进化解锁永久保留',()=>{const s=newGame(),m=makeMonster(1,9);s.team=[m];s.caught=[1];unlockForm(s,m);expect(dexEntries.map(e=>e.catalogId)).toEqual(Array.from({length:24},(_,i)=>String(i+1).padStart(3,'0')));expect(unlockedForms(s).size).toBe(1);m.level=10;evolveMonster(m);unlockForm(s,m);s.team=[];expect(unlockedForms(s).has('agnite:1')).toBe(true);expect(unlockedForms(s).has('agnite:2')).toBe(false);expect(validSave(JSON.parse(JSON.stringify(s)))).toBe(true);});
+ it('岩系与水系沿独立三阶线进化，水系克制火系',()=>{const rock=makeMonster(2,10),water=makeMonster(5,20),fire=makeMonster(1,20);expect(evolveMonster(rock)?.to).toBe(1);expect(evolveMonster(water)?.to).toBe(2);expect(combatDamage(water,fire,true,freshState(),freshState(),()=>.5).effective).toBe(true);});
+ it('旧档只推断已有形态，不按等级解锁未来形态',()=>{const s=newGame();delete s.dexForms;s.caught=[1];s.team=[makeMonster(1,22)];expect([...unlockedForms(s)]).toEqual(['agnite:0']);s.team[0].form=1;expect(unlockedForms(s).has('agnite:1')).toBe(true);expect(unlockedForms(s).has('agnite:2')).toBe(false);});
+ it('非法解锁和负数库存被拒绝',()=>{expect(validSave({...newGame(),dexForms:['agnite:9']})).toBe(false);expect(validSave({...newGame(),tonics:-1})).toBe(false);});
+ it('无效道具不消耗库存，有效药剂真实生效',()=>{const s=newGame(),m=makeMonster(1,5),st=freshState();expect(useCombatItem(s,m,st,'potion')).toBe(null);expect(s.potions).toBe(4);m.hp-=30;expect(useCombatItem(s,m,st,'potion')).not.toBe(null);expect(s.potions).toBe(3);expect(useCombatItem(s,m,st,'remedy')).toBe(null);st.attack=-2;useCombatItem(s,m,st,'remedy');expect(st.attack).toBe(0);expect(s.remedies).toBe(1);useCombatItem(s,m,st,'tonic');expect(st.attack).toBe(1);});
+ it('强化弱化与守护改变实际伤害',()=>{const a=makeMonster(1,10),b=makeMonster(0,10),normal=combatDamage(a,b,true,freshState(),freshState(),()=>.5).amount;expect(combatDamage(a,b,true,{attack:2,guard:0},freshState(),()=>.5).amount).toBeGreaterThan(normal);expect(combatDamage(a,b,true,{attack:-2,guard:0},freshState(),()=>.5).amount).toBeLessThan(normal);expect(combatDamage(a,b,true,freshState(),{attack:0,guard:1},()=>.5).amount).toBe(Math.floor(normal/2));});
+});

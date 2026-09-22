@@ -1,0 +1,111 @@
+/* 普通弹窗与战后结算共用的精细像素游戏框架；专属图鉴书、背包和商店继续保留各自结构。 */
+.rpg-shell .modal-shade{background:rgba(11,30,29,.72);backdrop-filter:none}
+.rpg-shell .rpg-panel.modal-frame,
+.rpg-shell .save-panel{
+  --frame-dark:#26372e;
+  --frame-mid:#69573b;
+  --frame-gold:#d7b868;
+  position:relative;
+  width:min(720px,92vw);
+  padding:30px 34px 28px;
+  overflow:auto;
+  border:4px solid var(--frame-dark);
+  border-radius:0;
+  clip-path:polygon(12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px),0 12px);
+  background:
+    linear-gradient(90deg,transparent 31px,rgba(150,124,70,.14) 32px,transparent 33px),
+    repeating-linear-gradient(0deg,rgba(95,81,50,.035) 0 1px,transparent 1px 4px),
+    #f4ebcf;
+  color:#2c4639;
+  box-shadow:0 0 0 3px var(--frame-gold),0 0 0 6px var(--frame-dark),0 12px 0 rgba(12,25,22,.46),inset 0 0 0 3px #fff8d9,inset 0 0 0 6px #b9a16c;
+  font-family:Zpix,"Microsoft YaHei",sans-serif;
+}
+.rpg-shell .rpg-panel.modal-frame:before,
+.rpg-shell .rpg-panel.modal-frame:after,
+.rpg-shell .save-panel:before,
+.rpg-shell .save-panel:after{
+  content:'';position:absolute;z-index:2;width:20px;height:20px;top:8px;
+  border:3px solid #2f392f;background:#b79650;box-shadow:inset 0 0 0 3px #ecd28c;
+  clip-path:polygon(0 0,100% 0,100% 72%,72% 100%,0 100%);
+}
+.rpg-shell .rpg-panel.modal-frame:before,.rpg-shell .save-panel:before{left:8px}
+.rpg-shell .rpg-panel.modal-frame:after,.rpg-shell .save-panel:after{right:8px;transform:scaleX(-1)}
+.rpg-shell .panel-kicker{display:block;margin:0 0 4px;padding-left:2px;color:#8c7243;font:10px Zpix,sans-serif;letter-spacing:3px}
+.rpg-shell .rpg-panel.modal-frame>h2{
+  display:block;margin:0 0 20px;padding:0 0 13px;
+  border:0;border-bottom:3px double #b89f64;border-radius:0;background:none;box-shadow:none;
+  color:#294b3c;font:26px Zpix,sans-serif;letter-spacing:2px;text-shadow:1px 1px #fff9df;
+}
+.rpg-shell .rpg-panel.modal-frame>h2:before{content:'◆';margin-right:10px;color:#b68d3e;font-size:13px;vertical-align:4px}
+.rpg-shell .rpg-panel.modal-frame>p{margin:14px 0;color:#4e5c48;font:14px/2 Zpix,sans-serif}
+.rpg-shell .rpg-panel.modal-frame .panel-actions{gap:12px;margin-top:22px;padding-top:18px;border-top:2px solid #c8b88b}
+.rpg-shell .rpg-panel.modal-frame .rpg-action,
+.rpg-shell .save-panel .rpg-action{
+  min-height:46px;padding:9px 18px;border:2px solid #273c31;border-radius:0;
+  clip-path:polygon(8px 0,calc(100% - 8px) 0,100% 8px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0 calc(100% - 8px),0 8px);
+  background:#486b52;color:#fff0bd;box-shadow:inset 2px 2px #769474,inset -2px -2px #294738,0 4px #293b31;
+  font:14px Zpix,sans-serif;transition:filter .08s,transform .08s;
+}
+.rpg-shell .rpg-panel.modal-frame .rpg-action:hover:not(:disabled),
+.rpg-shell .save-panel .rpg-action:hover:not(:disabled){background:#587b5e;border-color:#263b31;box-shadow:inset 2px 2px #8ca584,inset -2px -2px #31513f,0 4px #293b31;filter:brightness(1.06)}
+.rpg-shell .rpg-panel.modal-frame .rpg-action:active:not(:disabled),
+.rpg-shell .save-panel .rpg-action:active:not(:disabled){transform:translateY(3px);box-shadow:inset 2px 2px #31513f,0 1px #293b31}
+.rpg-shell .rpg-panel.modal-frame .rpg-action:focus-visible,
+.rpg-shell .save-panel .rpg-action:focus-visible{outline:3px solid #f4cf68;outline-offset:3px}
+.rpg-shell .dialog-panel{width:min(900px,calc(100vw - 48px));padding:22px 28px 20px}
+.rpg-shell .dialog-panel .panel-kicker{display:none}
+.rpg-shell .dialog-panel>h2{margin-bottom:10px;padding-bottom:9px;font-size:18px}
+.rpg-shell .dialog-panel>p{margin:0;font-size:13px;line-height:1.8}
+.rpg-shell .dialog-panel .panel-actions{margin-top:10px;padding-top:8px;border-top:0}
+.rpg-shell .dialog-panel .panel-actions .rpg-action{min-height:40px}
+
+/* 存档页沿用同一护角与字体，但保留三槽信息布局。 */
+.rpg-shell .save-panel{width:min(920px,94vw);font-family:Zpix,"Microsoft YaHei",sans-serif}
+.rpg-shell .save-panel .partner-heading{margin:0 0 18px;padding:0 0 14px;border:0;border-bottom:3px double #b89f64}
+.rpg-shell .save-panel .partner-heading h2{padding:0;background:none;color:#294b3c;font:25px Zpix,sans-serif;box-shadow:none}
+.rpg-shell .save-panel .partner-heading h2:before{content:'◆';color:#b68d3e;font-size:12px}
+.rpg-shell .save-row{border:2px solid #7d7756!important;border-radius:0!important;background:#e7e2c5!important;box-shadow:inset 2px 2px #fff5d6,inset -2px -2px #b7b18d!important}
+.rpg-shell .save-number{font-family:Zpix,sans-serif;color:#b98d3e!important;text-shadow:2px 2px #4a4939}
+.rpg-shell .save-actions .delete-slot{background:#805449!important;color:#ffe1c9!important}
+
+/* 战后结算：每位队员是一条真实成长记录，右侧逐项播放升级、领悟与进化。 */
+.rpg-shell .result-shade{padding:24px;background:rgba(7,24,24,.86)}
+.battle-result-panel{
+  --ink:#263d35;--gold:#e5bf5d;--paper:#f3e7c3;
+  position:relative;width:min(1060px,96vw);max-height:92vh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;
+  overflow:hidden;border:4px solid #1b2d29;clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px);
+  background:#34463b;color:var(--ink);box-shadow:0 0 0 3px #bd9c4d,0 0 0 7px #182b27,0 14px 0 #0d1b18aa;
+  font-family:Zpix,"Microsoft YaHei",sans-serif;transform:translateY(8px);opacity:0;
+}
+.battle-result-panel.is-playing{animation:result-enter .28s steps(4,end) forwards}
+.result-heading{position:relative;display:grid;grid-template-columns:1fr auto;align-items:end;padding:18px 26px 16px;border-bottom:4px solid #1f342d;background:repeating-linear-gradient(90deg,#354b3f 0 3px,#385044 3px 6px);color:#ffedb0;box-shadow:inset 0 -2px #7e7046}
+.result-heading span{grid-column:1;color:#d8b75d;font-size:9px;letter-spacing:4px}.result-heading h2{grid-column:1;margin:5px 0 0;font:27px Zpix,sans-serif;letter-spacing:3px}.result-heading p{grid-column:2;grid-row:1/3;margin:0;padding:10px 15px;border:2px solid #d1ae57;background:#253b34;color:#ffe9a6;font-size:12px;box-shadow:inset 2px 2px #486052}
+.result-layout{min-height:0;display:grid;grid-template-columns:330px 1fr;gap:0;background:var(--paper)}
+.growth-party{list-style:none;margin:0;padding:16px;overflow-y:auto;border-right:4px solid #30453a;background:repeating-linear-gradient(0deg,#475749 0 4px,#4a5b4c 4px 8px);scrollbar-color:#c8a957 #2c3f36;scrollbar-width:thin}
+.growth-party li+li{margin-top:10px}.growth-party button{position:relative;width:100%;min-height:70px;display:grid;grid-template-columns:54px 1fr auto;align-items:center;gap:10px;padding:8px 12px;border:2px solid #263a31;background:#d8d6b5;color:#34483b;text-align:left;box-shadow:inset 2px 2px #fff1c9,inset -2px -2px #969878,0 3px #263830;font-family:Zpix,sans-serif;cursor:pointer}
+.growth-party button[aria-pressed=true]{border-color:#f1c45d;background:#f0dfaa;box-shadow:inset 2px 2px #fff7d6,inset -2px -2px #b49b5e,0 0 0 2px #8e7138,0 3px #263830}
+.growth-portrait{display:flex;align-items:center;justify-content:center;width:52px;height:52px;overflow:hidden}.growth-portrait .monster-portrait{transform:scale(.8)}
+.growth-name{min-width:0}.growth-name b,.growth-name small{display:block}.growth-name b{font-size:15px;color:#264438}.growth-name small{margin-top:7px;color:#67715d;font-size:9px;white-space:nowrap}.growth-level{font-size:12px;color:#46594a}.growth-party em{position:absolute;right:-3px;top:-6px;padding:3px 5px;background:#c05938;color:#fff4c2;font:9px Zpix,sans-serif;box-shadow:2px 2px #63382e}
+.growth-focus{position:relative;min-height:420px;padding:24px 34px 22px;overflow:auto;background:repeating-linear-gradient(0deg,rgba(91,78,48,.04) 0 1px,transparent 1px 4px),linear-gradient(90deg,#efe4c2,#f7edcf 52%,#eadfbd);box-shadow:inset 4px 0 #fff4d4}
+.growth-creature{height:190px;display:flex;align-items:flex-end;justify-content:center;filter:drop-shadow(0 8px 0 #7f885d4d)}.growth-creature .monster-art{transform:scale(.86);transform-origin:center bottom}
+.growth-title{text-align:center;margin:-2px 0 15px}.growth-title span{color:#94753b;font-size:9px;letter-spacing:2px}.growth-title h3{margin:7px 0 4px;font:25px Zpix,sans-serif;color:#294a3c}.growth-title>b{font-size:12px;color:#b05238}
+.growth-xp{margin:12px auto 0;max-width:560px}.growth-xp>div:first-child{display:flex;justify-content:space-between;align-items:center;font-size:11px}.growth-xp strong{color:#a07128}.growth-xp-track{height:14px;margin:8px 0 5px;padding:2px;border:2px solid #30443a;background:#25352f;box-shadow:inset 1px 1px #101d1a}.growth-xp-track i{display:block;height:100%;width:var(--xp-after);background:repeating-linear-gradient(90deg,#64a9c4 0 8px,#76bbd1 8px 10px);box-shadow:inset 0 2px #b9e5e5;transform-origin:left;transform:scaleX(0)}
+.battle-result-panel.is-playing .growth-xp-track i{animation:xp-grow .9s .24s steps(12,end) forwards}.growth-focus.did-level .growth-xp-track i{background:repeating-linear-gradient(90deg,#d9a948 0 8px,#efc65b 8px 10px);box-shadow:inset 0 2px #fff0a1}.growth-xp>small{display:block;text-align:right;color:#69705c;font-size:9px}
+.growth-events{min-height:31px;display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:15px}.growth-event{padding:7px 10px;border:2px solid #516550;background:#d8d8b5;color:#385042;font-size:10px;box-shadow:inset 1px 1px #fff4ce,0 2px #7a795c}.level-event{border-color:#9b6f2e;background:#f0cf73;color:#593b20}.move-event{border-color:#477267;background:#9dc5ac;color:#233f35}.steady-event{opacity:.8}
+.growth-sparkles{position:absolute;inset:20px 40px auto;height:210px;pointer-events:none}.growth-sparkles i{position:absolute;width:8px;height:8px;background:#e5bd50;clip-path:polygon(50% 0,64% 36%,100% 50%,64% 64%,50% 100%,36% 64%,0 50%,36% 36%);opacity:0}.growth-sparkles i:nth-child(1){left:12%;top:55%}.growth-sparkles i:nth-child(2){left:28%;top:20%}.growth-sparkles i:nth-child(3){left:72%;top:28%}.growth-sparkles i:nth-child(4){left:84%;top:62%}.growth-sparkles i:nth-child(5){left:52%;top:8%}.battle-result-panel.is-playing .did-level .growth-sparkles i{animation:spark-pop .7s steps(4,end) forwards}.battle-result-panel.is-playing .did-level .growth-sparkles i:nth-child(2){animation-delay:.12s}.battle-result-panel.is-playing .did-level .growth-sparkles i:nth-child(3){animation-delay:.2s}.battle-result-panel.is-playing .did-level .growth-sparkles i:nth-child(4){animation-delay:.3s}.battle-result-panel.is-playing .did-level .growth-sparkles i:nth-child(5){animation-delay:.38s}
+.result-evolution{position:relative;height:216px;display:grid;grid-template-columns:1fr 36px 1fr;align-items:center;text-align:center}.result-evolution>div{display:flex;flex-direction:column;align-items:center}.result-evolution .monster-art{width:160px;height:160px;background-size:320px 240px;filter:drop-shadow(0 7px #727b5944)}.result-evolution>div:first-child{opacity:.58}.result-evolution small{margin-top:-9px;color:#425345;font-size:11px}.result-evolution>i{font-style:normal;color:#b68b39;font-size:28px}.result-evolution>b{position:absolute;left:50%;bottom:1px;transform:translateX(-50%);padding:6px 11px;background:#bd5b3d;color:#fff2bc;font-size:10px;box-shadow:3px 3px #623b2f;white-space:nowrap}
+.battle-result-panel.is-playing .result-evolution>div:last-of-type{animation:evolve-flash .75s .18s steps(5,end) both}
+.result-footer{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 22px;border-top:4px solid #20352e;background:#344a3e;color:#d5c487;font-size:10px;box-shadow:inset 0 2px #697052}.result-next{min-width:180px;padding:10px 15px;border:2px solid #1d302a;background:#d4ae52;color:#29392f;font:13px Zpix,sans-serif;box-shadow:inset 2px 2px #ffe18a,inset -2px -2px #8d6c2f,0 4px #182a25;clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px);cursor:pointer}.result-next:hover{filter:brightness(1.1)}.result-next:active{transform:translateY(3px);box-shadow:inset 2px 2px #8d6c2f,0 1px #182a25}.result-next b{margin-left:12px;font-size:18px}
+@keyframes result-enter{to{opacity:1;transform:none}}@keyframes xp-grow{from{width:var(--xp-before);transform:scaleX(1)}to{width:var(--xp-after);transform:scaleX(1)}}@keyframes spark-pop{0%{opacity:0;transform:scale(0)}45%{opacity:1;transform:scale(2)}100%{opacity:.35;transform:scale(.7)}}@keyframes evolve-flash{0%{opacity:0;filter:brightness(5) drop-shadow(0 0 20px #fff6b4);transform:scale(.7)}55%{opacity:1;filter:brightness(2.2) drop-shadow(0 0 18px #ffd95e);transform:scale(1.08)}100%{filter:brightness(1) drop-shadow(0 7px #727b5944);transform:none}}
+
+@media(max-width:760px){
+  .rpg-shell .result-shade{padding:8px}.battle-result-panel{width:100%;max-height:calc(100dvh - 16px)}
+  .result-heading{padding:12px 15px}.result-heading h2{font-size:20px}.result-heading p{padding:7px 9px;font-size:9px;max-width:45vw}
+  .result-layout{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+  .growth-party{display:flex;gap:8px;padding:10px;overflow-x:auto;border-right:0;border-bottom:3px solid #30453a}.growth-party li{flex:0 0 145px}.growth-party li+li{margin:0}.growth-party button{min-height:54px;grid-template-columns:38px 1fr;padding:5px 7px}.growth-portrait{width:36px;height:36px}.growth-level{display:none}.growth-name b{font-size:12px}.growth-name small{font-size:8px}
+  .growth-focus{min-height:0;padding:12px 16px}.growth-creature{height:130px}.growth-creature .monster-art{transform:scale(.62)}.growth-title h3{font-size:19px}.growth-events{margin-top:10px}
+  .result-evolution{height:154px}.result-evolution .monster-art{width:112px;height:112px;background-size:224px 168px}.result-footer{padding:9px 12px}.result-next{min-width:145px;padding:8px 10px}.result-footer>span{max-width:42%;line-height:1.5}
+  .rpg-shell .rpg-panel.modal-frame,.rpg-shell .save-panel{width:calc(100vw - 24px);padding:24px 18px 18px;max-height:calc(100dvh - 24px)}
+}
+@media(max-width:430px){.result-heading p{display:none}.growth-party li{flex-basis:128px}.growth-name small{white-space:normal}.result-evolution .monster-art{width:96px;height:96px;background-size:192px 144px}.result-evolution{grid-template-columns:1fr 24px 1fr}.result-footer{flex-direction:column;align-items:stretch;gap:7px}.result-footer>span{max-width:none;text-align:center}.result-next{width:100%}}
+@media(prefers-reduced-motion:reduce){.battle-result-panel.is-playing,.battle-result-panel.is-playing .growth-xp-track i,.battle-result-panel.is-playing .did-level .growth-sparkles i,.battle-result-panel.is-playing .result-evolution>div:last-of-type{animation:none;opacity:1;transform:none}}

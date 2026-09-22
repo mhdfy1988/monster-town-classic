@@ -1,0 +1,105 @@
+/* 正式像素捕捉方案：替换怪物吸入／挣脱表现，球体、摇晃和结算仍共用统一捕捉链路。 */
+.battle-screen[data-capture-style="pixel"] .capture-pixels {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.battle-screen[data-capture-style="pixel"] .capture-pixels i {
+  position: absolute;
+  left: var(--px);
+  top: var(--py);
+  width: var(--ps);
+  height: var(--ps);
+  background: var(--pc);
+  opacity: 0;
+  image-rendering: pixelated;
+  will-change: transform, opacity;
+}
+
+.battle-screen[data-capture-style="pixel"] .capture-pixel-beam {
+  position: absolute;
+  height: 38px;
+  z-index: 2;
+  transform-origin: left center;
+  clip-path: polygon(0 12%, 100% 42%, 100% 58%, 0 88%);
+  background: linear-gradient(90deg, #fff8b300, #ffe97955 45%, #fff8cdb5);
+  opacity: 0;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+.battle-screen[data-capture-style="pixel"][data-capture-phase="throw"] .enemy-monster .monster-art {
+  animation: fx-pixel-creature-absorb 1.25s 1.05s steps(16, end) both;
+}
+
+.battle-screen[data-capture-style="pixel"][data-capture-phase="throw"] .capture-pixels i {
+  animation: fx-pixel-absorb .7s calc(1.06s + var(--pd)) steps(12, end) both;
+}
+
+.battle-screen[data-capture-style="pixel"][data-capture-phase="throw"] .capture-pixel-beam {
+  animation: fx-pixel-beam 1.35s 1s steps(10, end) both;
+}
+
+.battle-screen[data-capture-style="pixel"][data-capture-phase="throw"] .orb-aura {
+  animation: fx-pixel-mouth-pulse 1.4s 1s steps(9, end) both;
+}
+
+.battle-screen[data-capture-style="pixel"][data-capture-phase="break"] .enemy-monster .monster-art {
+  transform-origin: 50% 72%;
+  animation: fx-pixel-creature-return 1.12s .08s steps(10, end) both;
+}
+
+.battle-screen[data-capture-style="pixel"][data-capture-phase="break"] .capture-pixels i {
+  animation: fx-pixel-release .72s calc(.12s + var(--rd)) steps(9, end) both;
+}
+
+@keyframes fx-pixel-creature-absorb {
+  0%, 8% { clip-path: polygon(0 0,100% 0,100% 100%,0 100%); opacity: 1; transform: none; }
+  30% { clip-path: polygon(0 0,100% 0,100% 58%,88% 60%,84% 78%,68% 80%,64% 100%,0 100%); opacity: 1; transform: none; }
+  55% { clip-path: polygon(0 0,100% 0,100% 26%,84% 28%,80% 45%,62% 48%,58% 65%,40% 68%,36% 85%,18% 88%,14% 100%,0 100%); opacity: 1; transform: none; }
+  78% { clip-path: polygon(0 0,62% 0,58% 16%,42% 18%,38% 35%,22% 38%,18% 55%,0 58%); opacity: 1; transform: none; }
+  100% { clip-path: polygon(0 0,0 0,0 0); opacity: 0; transform: scale(.75); }
+}
+
+@keyframes fx-pixel-beam {
+  0% { opacity: 0; filter: brightness(.8); }
+  18%, 72% { opacity: .8; filter: brightness(1.2); }
+  42% { opacity: .48; filter: brightness(1.5); }
+  100% { opacity: 0; filter: brightness(2); }
+}
+
+@keyframes fx-pixel-mouth-pulse {
+  0% { opacity: 0; transform: scale(.45); }
+  20%, 72% { opacity: .9; transform: scale(1.05); }
+  42% { opacity: .45; transform: scale(1.35); }
+  100% { opacity: 0; transform: scale(.7); }
+}
+
+@keyframes fx-pixel-absorb {
+  0% { opacity: 0; transform: translate(0, 0) scale(1); }
+  16% { opacity: 1; transform: translate(0, 0) scale(1); }
+  58% { opacity: 1; transform: translate(var(--mx), var(--my)) scale(.8); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(.2); }
+}
+
+@keyframes fx-pixel-creature-return {
+  0%, 12% { transform: translateY(13cqh) scale(.08); opacity: 0; clip-path: inset(100% 0 0 0); }
+  38% { transform: translateY(8cqh) scale(.38); opacity: .45; clip-path: inset(54% 0 0 0); }
+  72% { transform: translateY(1cqh) scale(1.08); opacity: 1; clip-path: inset(0 0 0 0); }
+  100% { transform: none; opacity: 1; clip-path: inset(0 0 0 0); }
+}
+
+@keyframes fx-pixel-release {
+  0% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(.2); }
+  16% { opacity: 1; }
+  68% { opacity: 1; transform: translate(var(--rx), var(--ry)) scale(.8); }
+  100% { opacity: 0; transform: translate(0, 0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .battle-screen[data-capture-style="pixel"] .capture-pixels { display: none; }
+  .battle-screen[data-capture-style="pixel"] .capture-pixel-beam { display: none; }
+  .battle-screen[data-capture-style="pixel"] .enemy-monster .monster-art { clip-path: none; }
+}

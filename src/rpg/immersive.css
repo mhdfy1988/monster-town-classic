@@ -1,0 +1,68 @@
+/* 游戏界面层：只作用于 RPG，不改变地图工坊或世界像素尺寸。 */
+.rpg-shell{position:fixed;inset:0;display:block;width:auto;height:auto;padding:0;margin:0}
+.rpg-shell .rpg-stage{position:absolute;inset:0;width:100%;height:100%;border:0;box-shadow:none}
+.rpg-shell .world-hud{inset:24px auto auto 24px;z-index:2}
+.rpg-shell .location{padding:10px 22px;background:#243d32ed;border:2px solid #ecdfb1;box-shadow:0 0 0 3px #243b32,4px 6px 0 #172d3155;animation:region-arrival 5s both}
+.rpg-shell .location b{font-size:18px;letter-spacing:3px;color:#fff3d0}
+@keyframes region-arrival{0%{opacity:0;transform:translateY(-8px)}12%,70%{opacity:1;transform:none}100%{opacity:0;visibility:hidden}}
+.game-menu-toggle{position:absolute;z-index:4;top:22px;right:24px;display:flex;gap:10px;align-items:center;background:#f7efd6;color:#294339;border:2px solid #314b3e;box-shadow:inset 0 0 0 2px #d6c59d,3px 4px 0 #162f3455;padding:10px 14px;cursor:pointer;font:15px 'Microsoft YaHei',sans-serif}
+.rpg-shell kbd{font:10px Consolas;color:#768374}
+.travel-menu[hidden]{display:none}
+.travel-menu{position:absolute;z-index:5;right:24px;top:80px;bottom:24px;width:310px;max-width:calc(100% - 48px);overflow:auto;padding:20px;color:#304a3e;background:#f5efd9;border:3px solid #304d3c;box-shadow:inset 0 0 0 3px #d7c69d,5px 6px 0 #18332666}
+.travel-menu header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #c7bc95;padding-bottom:12px}
+.travel-menu h1{font:24px 'STKaiti','KaiTi',serif;letter-spacing:4px;margin:0}
+.travel-menu header button{background:none;border:0;font-size:26px;color:inherit;cursor:pointer}
+.travel-quest{margin:16px 0;padding-left:10px;border-left:3px solid #8e9c65}.travel-quest small{color:#7b805c;font-size:11px}.travel-quest p{font-size:13px;line-height:1.7;margin:5px 0}
+.travel-menu nav{display:grid;gap:7px}.travel-menu nav button{display:flex;justify-content:space-between;align-items:center;border:1px solid #c4b992;background:#e8e2c7;color:#304a3e;padding:12px 14px;font-size:15px;cursor:pointer;text-align:left}
+.travel-menu button:hover,.travel-menu button:focus-visible{background:#d7dfa8;outline:2px solid #637748;outline-offset:1px}
+.travel-menu #party-status{max-width:none;display:grid;font-size:12px;padding:16px 0;gap:8px}.travel-menu #party-status small{color:#63795c}
+.travel-menu #save-status{font-size:11px;line-height:1.7;color:#687754;border-top:1px solid #c4ba97;padding-top:12px}
+.travel-menu details{margin-top:16px;font-size:12px}.travel-menu summary{cursor:pointer}.travel-menu details p{line-height:1.9;color:#6a775e}.travel-menu details button{margin-top:12px;padding:8px;border:1px solid #b8b092;background:#e7e0c7;color:#304a3e;cursor:pointer}.travel-menu a{color:#6b785d}
+.rpg-shell:has(.title-screen) .world-hud,.rpg-shell:has(#rpg-overlay:not(:empty)) .game-menu-toggle{display:none}
+.rpg-shell:has(.title-screen) .location{animation:none}
+.rpg-shell .rpg-panel,.rpg-shell .title-card,.rpg-shell .battle-status{border:3px solid #314b3e;box-shadow:inset 0 0 0 3px #d7c69d,4px 5px 0 #19382966;background:#f5efd9}
+.rpg-shell .rpg-action{border:2px solid #a3a17a;border-radius:0;box-shadow:0 2px 0 #838e6955}.rpg-shell .rpg-action:hover:not(:disabled){transform:none;background:#dae1b1}
+
+/* 弹窗主题只作用于面板，不改变战场分区或独立快捷图标。 */
+.rpg-shell .modal-shade{background:#102a2a9c}
+.rpg-shell .rpg-panel,.rpg-shell .title-card,.rpg-shell .travel-menu{
+  border:2px solid #28463b;border-radius:8px;
+  outline:2px solid #cbb476;outline-offset:-5px;
+  background:linear-gradient(135deg,#fff8e3,#eee5c9);
+  box-shadow:0 0 0 2px #eed79e,0 7px 0 #18372de6,0 18px 42px #08252066;
+  color:#304b40;scrollbar-width:thin;scrollbar-color:#9d9f74 #e9e1c7;
+}
+.rpg-shell .rpg-panel{padding:28px;animation:panel-reveal .16s ease-out}
+.rpg-shell .rpg-panel>h2{display:table;margin:0 0 22px;padding:10px 24px 10px 16px;background:#315d49;color:#fff0c5;border-left:4px solid #d6b567;box-shadow:3px 3px 0 #c9c5a0;border-radius:0 4px 4px 0;font-size:25px;letter-spacing:2px}
+.rpg-shell .rpg-panel>p{color:#536450;line-height:1.9;margin:12px 0 22px}
+.rpg-shell .panel-actions{padding-top:18px;border-top:1px solid #c9c19e;gap:12px}
+.rpg-shell .rpg-panel .rpg-action,.rpg-shell .title-card .rpg-action,.rpg-shell .travel-menu nav button,.rpg-shell .travel-menu details button{
+  position:relative;border:2px solid #8e9873;border-radius:5px;
+  background:linear-gradient(#f9f4dc,#dfdfb9);color:#344d3f;
+  box-shadow:inset 0 1px 0 #fffce9,0 3px 0 #899371;
+  padding:11px 16px;font-size:14px;transition:background .12s,box-shadow .12s,transform .08s;
+}
+.rpg-shell .rpg-panel .rpg-action:hover:not(:disabled),.rpg-shell .title-card .rpg-action:hover:not(:disabled),.rpg-shell .travel-menu nav button:hover{background:linear-gradient(#fff4c3,#e9d59b);border-color:#a1864e;box-shadow:inset 0 1px #fffbe4,0 3px #927746;transform:none}
+.rpg-shell .rpg-panel .rpg-action:active:not(:disabled),.rpg-shell .title-card .rpg-action:active:not(:disabled),.rpg-shell .travel-menu nav button:active{transform:translateY(2px);box-shadow:inset 0 1px 3px #7b805244,0 1px #899371}
+.rpg-shell .rpg-panel .rpg-action:focus-visible,.rpg-shell .title-card .rpg-action:focus-visible{outline:2px solid #b58d42;outline-offset:3px}
+.rpg-shell .rpg-panel .rpg-action:disabled{background:#e1ddc8;color:#969883;border-color:#c1c1aa;box-shadow:none;opacity:1;cursor:not-allowed}
+.rpg-shell .rpg-panel .rpg-action small{color:#708067}
+.rpg-shell .dialog-panel .panel-actions{border-top:0;padding-top:6px}
+.rpg-shell .dialog-panel>h2{font-size:19px;margin-bottom:14px;padding:6px 20px 6px 12px}
+.rpg-shell .dialog-panel>p{margin:0;color:#354d40}
+.rpg-shell .dialog-panel .rpg-action,.rpg-shell #partner-lead:not(:disabled),.rpg-shell #menu-save{background:linear-gradient(#588361,#356049);border-color:#2c503d;color:#fff2c9;box-shadow:inset 0 1px #8aa67a,0 3px #254633}
+.rpg-shell .shop-heading,.rpg-shell .partner-heading,.rpg-shell .travel-menu header{background:#315d49;color:#fff0c5;border:1px solid #597b57;border-bottom:3px solid #d1b16c;border-radius:4px;padding:14px 16px;margin-bottom:18px}
+.rpg-shell .shop-heading h2,.rpg-shell .partner-heading h2{margin:4px 0;font-size:25px}
+.rpg-shell .shop-heading .eyebrow,.rpg-shell .partner-heading small,.rpg-shell .partner-heading h2 span{color:#c9d3aa}
+.rpg-shell .shop-wallet{background:#233f33;padding:8px 12px;border:1px solid #b4a574;border-radius:3px;color:#f2d490}.rpg-shell .shop-wallet b{font-size:22px}
+.rpg-shell .shop-product{border:1px solid #b8ba96;border-left:4px solid #94ab72;border-radius:5px;background:#f7f0d7;box-shadow:0 3px 0 #d7d4b4;padding:16px}
+.rpg-shell .shop-icon{border-radius:7px;background:#e0e5bd;border:2px solid #94a77a;box-shadow:inset 0 2px #f5f5d5,0 2px #c0c9a0}
+.rpg-shell .shop-bottom{border-top:1px solid #c9c19e;padding-top:16px}
+.rpg-shell .travel-menu header button{color:#fff0c5;border:1px solid #96ab7f;background:#244b38;border-radius:4px;width:32px;height:32px;line-height:24px}
+@keyframes panel-reveal{from{opacity:0;translate:0 7px}to{opacity:1;translate:0 0}}
+@media(max-width:640px){.rpg-shell .rpg-panel{padding:18px}.rpg-shell .shop-heading,.rpg-shell .partner-heading{padding:10px;gap:8px}.rpg-shell .shop-heading h2,.rpg-shell .partner-heading h2{font-size:20px}.rpg-shell .rpg-panel>h2{font-size:22px;padding:8px 14px}.rpg-shell .panel-actions{gap:8px}}
+@media(prefers-reduced-motion:reduce){.rpg-shell .rpg-panel{animation:none}.rpg-shell .rpg-panel .rpg-action{transition:none}}
+.rpg-shell .battle-topline{padding:8px 24px;font-size:12px;background:#263e32}.rpg-shell .battle-console{border-top:4px solid #314b3e;background:#f5efd9;min-height:0}.rpg-shell .battle-status{padding:12px 16px}.rpg-shell .battle-screen{overflow:hidden}.rpg-shell .battle-field{min-height:0}
+.rpg-shell .modal-shade:has(.dialog-panel){align-items:flex-end;background:transparent;padding:24px}.rpg-shell .dialog-panel{width:min(920px,100%);max-height:45%;padding:18px 26px}.dialog-panel .panel-actions{justify-content:flex-end;margin-top:8px}.dialog-panel .panel-actions .rpg-action{flex:0 0 auto}.dialog-panel h2{font-size:20px;margin:0 0 8px}.dialog-panel p{margin:0;line-height:1.8}
+@media(max-width:800px){.rpg-shell{padding:0}.rpg-shell .world-hud{inset:16px auto auto 16px}.game-menu-toggle{top:14px;right:14px}.travel-menu{right:14px;top:68px;bottom:14px}.rpg-shell .modal-shade:has(.dialog-panel){padding:14px}.rpg-shell .dialog-panel{max-height:55%;padding:16px}.rpg-shell .battle-console{min-height:0}}
+@media(prefers-reduced-motion:reduce){.rpg-shell .location{animation:none}.rpg-shell .rpg-action{transition:none}}

@@ -1,0 +1,54 @@
+// 战后成长与通用弹窗视觉回归；只使用独立无头浏览器上下文。
+const {chromium}=require('playwright');
+const fs=require('node:fs/promises');
+const path=require('node:path');
+
+(async()=>{const browser=await chromium.launch({ headless: true, channel: 'chrome' });try{
+  const output=path.resolve(__dirname,'../assets/qa/battle-results');
+  await fs.mkdir(output,{recursive:true});
+  const context=await browser.newContext({viewport:{width:1280,height:800}});
+  const page=await context.newPage();
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.goto('http://127.0.0.1:4190/?qa=battle-results');
+  await page.waitForFunction(()=>window.__rpg);
+  await page.evaluate(async()=>{
+    const r=window.__rpg;
+    const model=await import('/src/rpg/model.ts');
+    const progress=await import('/src/rpg/battleProgress.ts');
+    r.close();r.atTitle=false;r.save=model.newGame();
+    const fire=model.makeMonster(1,9);fire.xp=100;
+    const earth=model.makeMonster(2,2);earth.xp=18;
+    r.save.team=[fire,earth,model.makeMonster(5,5),model.makeMonster(0,6),model.makeMonster(7,4)];
+    const growth=progress.awardTeamExperience(r.save.team,20);
+    r.finishBattle('战斗胜利 · 获得 18 金币',growth);
+  });
+  await page.waitForTimeout(1100);
+  const inspect=async(label,requireEvolution=false)=>{const state=await page.evaluate(()=>{const panel=document.querySelector('.battle-result-panel').getBoundingClientRect();const focused=document.querySelector('.growth-focus').getBoundingClientRect();return {panel:{left:panel.left,top:panel.top,right:panel.right,bottom:panel.bottom},focused:{left:focused.left,top:focused.top,right:focused.right,bottom:focused.bottom},viewport:[innerWidth,innerHeight],rows:document.querySelectorAll('[data-growth-index]').length,text:document.querySelector('.battle-result-panel').innerText};});
+    if(state.rows!==5)throw Error(`${label}: expected five growth rows`);
+    if(state.panel.left<0||state.panel.top<0||state.panel.right>state.viewport[0]+1||state.panel.bottom>state.viewport[1]+1)throw Error(`${label}: panel outside viewport ${JSON.stringify(state)}`);
+    if(!state.text.includes('全队均已获得经验'))throw Error(`${label}: missing team experience message`);
+    if(requireEvolution&&(!state.text.includes('LEVEL UP')||!state.text.includes('招式进化')))throw Error(`${label}: missing level or evolution event`);
+  };
+  await inspect('desktop',true);
+  await page.screenshot({path:path.join(output,'battle-results-desktop.png')});
+  await page.getByRole('button',{name:/查看下一位/}).click();await page.waitForTimeout(350);
+  if(!(await page.locator('.growth-focus').innerText()).includes('领悟招式'))throw Error('second member learned move event missing');
+  await page.screenshot({path:path.join(output,'battle-results-learned-move.png')});
+  await page.setViewportSize({width:390,height:844});await page.waitForTimeout(350);
+  await inspect('mobile');
+  await page.screenshot({path:path.join(output,'battle-results-mobile.png')});
+  await page.evaluate(()=>window.__rpg.dialog('护理员 · 阿澄','伙伴们已经恢复健康！\n放心继续探索吧。'));
+  await page.waitForTimeout(200);
+  const dialog=await page.locator('.dialog-panel').boundingBox();
+  if(!dialog||dialog.x<0||dialog.y<0||dialog.x+dialog.width>390||dialog.y+dialog.height>844)throw Error('mobile dialog outside viewport');
+  await page.screenshot({path:path.join(output,'dialog-mobile.png')});
+  await page.setViewportSize({width:1280,height:800});
+  await page.evaluate(()=>window.__rpg.slotMenu('load'));
+  await page.waitForTimeout(200);
+  const savePanel=await page.locator('.save-panel').boundingBox();
+  if(!savePanel||savePanel.x<0||savePanel.y<0||savePanel.x+savePanel.width>1280||savePanel.y+savePanel.height>800)throw Error('save panel outside desktop viewport');
+  await page.screenshot({path:path.join(output,'save-panel-desktop.png')});
+  if(errors.length)throw Error(errors.join('\n'));
+  console.log('PASS battle results: five-member growth, level/move/evolution events, desktop/mobile bounds, dialog and save panel');
+  await context.close();
+}finally{await browser.close();}})().catch(error=>{console.error(error);process.exitCode=1;});

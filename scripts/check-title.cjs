@@ -1,0 +1,44 @@
+// 独立无头测试，绝不使用用户标签页或存档。
+const {chromium}=require('playwright');
+const path=require('node:path');
+const fs=require('node:fs/promises');
+(async()=>{const browser=await chromium.launch({ headless: true, channel: 'chrome' });try{
+ const page=await browser.newPage({viewport:{width:1280,height:800}});
+ await page.goto('http://127.0.0.1:4190/?qa=1');await page.waitForFunction(()=>window.__rpg);
+ const output=path.resolve(__dirname,'../assets/qa/title');await fs.mkdir(output,{recursive:true});
+ if(!await page.locator('#title-continue').isDisabled())throw new Error('empty continue');
+ await page.screenshot({path:path.join(output,'title.png')});
+ await page.keyboard.press('ArrowDown');
+ if(!await page.locator('#title-slots').evaluate(el=>el===document.activeElement))throw new Error('keyboard navigation');
+ await page.keyboard.press('ArrowUp');await page.keyboard.press('Enter');
+ if(await page.locator('[data-slot]').count())throw new Error('new game asks for slot');
+ await page.evaluate(()=>{const r=window.__rpg;r.close();r.save.money=456;r.persist();});
+ if(!await page.evaluate(()=>window.__rpg.activeSlot===null&&JSON.parse(localStorage.getItem('pocket-grove-slots-v1')).slots.every(s=>s===null)))throw new Error('unsaved game wrote slot');
+ await page.evaluate(()=>window.__rpg.returnToTitle());
+ await page.getByRole('button',{name:'取消',exact:true}).click();
+ if(!await page.evaluate(()=>!window.__rpg.atTitle&&window.__rpg.save.money===456))throw new Error('cancel lost progress');
+ await page.evaluate(()=>window.__rpg.returnToTitle());await page.getByRole('button',{name:'保存并返回',exact:true}).click();await page.locator('[data-slot="1"]').click();
+ await page.locator('#title-continue').waitFor();
+ await page.locator('#title-continue').click();
+ if(!await page.evaluate(()=>window.__rpg.save.money===456&&window.__rpg.activeSlot===1&&!window.__rpg.atTitle))throw new Error('continue mismatch');
+ await page.evaluate(()=>{window.__rpg.save.money=458;window.__rpg.toggleTravelMenu();});await page.locator('#menu-save').click();
+ if(await page.locator('[data-slot]').count())throw new Error('subsequent save asks for slot');
+ if(!await page.evaluate(()=>JSON.parse(localStorage.getItem('pocket-grove-slots-v1')).slots[1].data.money===458))throw new Error('manual save wrong slot');
+ await page.evaluate(()=>{window.__rpg.save.money=457;window.__rpg.persist();window.__rpg.titleScreen();});
+ await page.locator('#title-new').click();
+ if(!await page.evaluate(()=>window.__rpg.activeSlot===null&&JSON.parse(localStorage.getItem('pocket-grove-slots-v1')).slots[1].data.money===457))throw new Error('new game overwrote existing save');
+ await page.evaluate(()=>{window.__rpg.close();window.__rpg.returnToTitle();});await page.getByRole('button',{name:'放弃本次未保存进度',exact:true}).click();
+ await page.locator('#title-new').click();await page.evaluate(()=>{window.__rpg.close();window.__rpg.slotMenu('save');});await page.locator('[data-slot="0"]').click();
+ await page.evaluate(()=>{window.__rpg.close();window.__rpg.titleScreen();});
+ await page.locator('#title-slots').click();await page.waitForTimeout(250);await page.screenshot({path:path.join(output,'slots.png')});
+ await page.locator('[data-slot="1"]').click();
+ if(!await page.evaluate(()=>window.__rpg.save.money===457))throw new Error('slots not independent');
+ await page.evaluate(()=>window.__rpg.titleScreen());await page.locator('#title-slots').click();await page.locator('[data-delete="1"]').click();await page.getByRole('button',{name:'取消',exact:true}).click();
+ if(!await page.locator('[data-delete="1"]').count())throw new Error('cancel deleted');
+ await page.locator('[data-delete="1"]').click();await page.getByRole('button',{name:'确认删除',exact:true}).click();
+ await page.reload();await page.waitForFunction(()=>window.__rpg);await page.locator('#title-slots').click();
+ if(!await page.locator('[data-slot="1"]').isDisabled())throw new Error('deleted slot revived');
+ await page.locator('#slots-back').click();await page.locator('#title-exit').click();await page.getByRole('button',{name:'结束游戏',exact:true}).click();await page.locator('#return-title').click();
+ for(const size of [{width:390,height:844},{width:800,height:450}]){await page.setViewportSize(size);await page.screenshot({path:path.join(output,`title-${size.width}.png`)});if(!await page.locator('#title-exit').evaluate(el=>{const r=el.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight&&r.right<=innerWidth;}))throw new Error('exit invisible');}
+ console.log('PASS: new, continue, independent slots, delete/cancel, reload, exit; headless only');
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

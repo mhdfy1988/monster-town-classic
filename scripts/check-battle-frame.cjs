@@ -1,0 +1,48 @@
+// 战斗视觉回归：无头浏览器验证主指令、子菜单、战场边界和窄屏布局。
+const {chromium}=require('playwright');
+const fs=require('node:fs/promises');
+const path=require('node:path');
+
+(async()=>{const browser=await chromium.launch({ headless: true, channel: 'chrome' });try{
+  const output=path.resolve(__dirname,'../assets/qa/battle-frame');
+  await fs.mkdir(output,{recursive:true});
+  const page=await browser.newPage({viewport:{width:1280,height:800}});
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.goto('http://127.0.0.1:4190/?qa=battle-frame');
+  await page.waitForFunction(()=>window.__rpg);
+  await page.evaluate(async()=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.close();r.atTitle=false;r.save=m.newGame();r.save.team=[{...m.makeMonster(0,12),form:1}];r.startBattle({...m.makeMonster(1,12),form:1},false);});
+  await page.waitForTimeout(900);
+  const verify=async label=>{const result=await page.evaluate(()=>{const field=document.querySelector('.battle-field').getBoundingClientRect();const screen=document.querySelector('.battle-screen').getBoundingClientRect();const fighters=[...document.querySelectorAll('.battle-field .monster-art')].map(el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom};});return {field:{left:field.left,right:field.right,top:field.top,bottom:field.bottom},screen:{left:screen.left,right:screen.right,top:screen.top,bottom:screen.bottom},fighters,scroll:[document.documentElement.scrollWidth,innerWidth,document.documentElement.scrollHeight,innerHeight]};});
+    if(result.fighters.some(r=>r.left<result.field.left-1||r.right>result.field.right+1||r.top<result.field.top-1||r.bottom>result.field.bottom+1))throw Error(`${label}: fighter outside field ${JSON.stringify(result)}`);
+    if(result.screen.left<0||result.screen.right>result.scroll[1]+1||result.screen.top<0||result.screen.bottom>result.scroll[3]+1)throw Error(`${label}: screen outside viewport`);
+  };
+  await verify('desktop main');
+  if(await page.locator('.battle-actions[data-menu="main"] .battle-command').count()!==4)throw Error('main command count');
+  await page.screenshot({path:path.join(output,'battle-main-desktop.png')});
+  await page.getByRole('button',{name:'招式'}).click();await page.waitForTimeout(100);
+  if(await page.locator('.battle-actions[data-menu="skills"] .battle-command').count()<2)throw Error('skills not opened');
+  await page.screenshot({path:path.join(output,'battle-skills-desktop.png')});
+  await page.getByRole('button',{name:'返回'}).click();
+  await page.evaluate(()=>{const r=window.__rpg;r.save.tonics=0;r.save.remedies=0;});
+  await page.getByRole('button',{name:'道具'}).click();await page.waitForTimeout(100);
+  if(await page.locator('.battle-actions[data-menu="items"] .battle-command').count()!==3)throw Error('owned items plus back count');
+  if((await page.locator('.battle-actions[data-menu="items"]').innerText()).includes('×0'))throw Error('zero-count item is visible');
+  for(const key of ['balls','potions'])if(!await page.locator(`.battle-command[data-kind="${key}"] .potion-artwork`).count())throw Error(`missing item artwork ${key}`);
+  await page.screenshot({path:path.join(output,'battle-items-desktop.png')});
+  await page.evaluate(()=>{const r=window.__rpg;r.save.team[0].hp-=20;r.save.tonics=2;r.save.remedies=2;const state=r.state(r.save.team[0]);state.attack=-1;state.guard=0;r.battleView();});
+  await page.waitForTimeout(100);
+  const badgeFullyVisible=await page.evaluate(()=>{const badge=document.querySelector('.ally-status .status-icon'),card=document.querySelector('.ally-status');if(!badge||!card)return false;const rect=badge.getBoundingClientRect(),box=card.getBoundingClientRect(),hit=document.elementFromPoint(rect.left+rect.width/2,rect.bottom-2);return rect.top>=box.top&&rect.bottom<=box.bottom&&Boolean(hit&&(hit===badge||badge.contains(hit)));});
+  if(!badgeFullyVisible)throw Error('ally status badge is outside or clipped');
+  const badge=page.locator('.ally-status .status-icon').first();await badge.hover();await page.waitForTimeout(50);
+  await page.screenshot({path:path.join(output,'battle-status-tooltip-desktop.png')});
+  const tooltipCheck=await page.evaluate(()=>{const tip=document.querySelector('.ally-status .status-tooltip');if(!tip)return {visible:false,reason:'missing'};const style=getComputedStyle(tip),rect=tip.getBoundingClientRect();return {visible:style.display!=='none'&&style.visibility!=='hidden'&&Number(style.opacity)>0&&rect.width>100&&rect.height>20&&rect.left>=0&&rect.right<=innerWidth&&rect.top>=0&&rect.bottom<=innerHeight,display:style.display,visibility:style.visibility,opacity:style.opacity,zIndex:style.zIndex,rect:{left:rect.left,top:rect.top,right:rect.right,bottom:rect.bottom,width:rect.width,height:rect.height}};});
+  if(!tooltipCheck.visible)throw Error(`ally status tooltip is hidden or clipped: ${JSON.stringify(tooltipCheck)}`);
+  if(await page.locator('.battle-actions[data-menu="items"] .battle-command').count()!==5)throw Error('full inventory plus back count');
+  for(const key of ['balls','potions','tonics','remedies'])if(!await page.locator(`.battle-command[data-kind="${key}"] .potion-artwork`).count())throw Error(`missing full item artwork ${key}`);
+  await page.screenshot({path:path.join(output,'battle-items-full-desktop.png')});
+  await page.setViewportSize({width:390,height:844});await page.waitForTimeout(100);
+  await verify('mobile items');
+  await page.screenshot({path:path.join(output,'battle-items-mobile.png')});
+  if(errors.length)throw Error(errors.join('\n'));
+  console.log('PASS battle frame: main, skills, items, desktop/mobile bounds; headless only');
+}finally{await browser.close();}})().catch(error=>{console.error(error);process.exitCode=1;});

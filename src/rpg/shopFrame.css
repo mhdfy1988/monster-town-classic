@@ -1,0 +1,22 @@
+/* 商店沿用旅行箱框架，以木质货架和纸质价签表达买卖。 */
+.rpg-shell .trading-post.pixel-bag{width:min(860px,94vw)}
+.trading-post.pixel-bag .trade-layout{grid-template-columns:minmax(240px,1fr) minmax(230px,1fr);gap:20px;align-items:stretch}
+.trading-post.pixel-bag .trade-shelf{border:3px solid #362c22;border-radius:0;padding:14px;gap:18px 12px;background:repeating-linear-gradient(0deg,#4e3f30 0 4px,#514232 4px 8px);box-shadow:0 0 0 2px #b29a68,inset 3px 3px #332b23,inset -3px -3px #836b49;align-content:start}
+.trading-post.pixel-bag .trade-goods{position:relative;padding:10px 4px 12px;gap:5px;border:2px solid #66583d;border-radius:0;background:#394b40;color:#f4e4bc;box-shadow:inset 2px 2px #6c7860,inset -2px -2px #28392f,0 5px #af8c54,0 7px #302b22;transform:none}
+.trading-post.pixel-bag .trade-goods.selected{border-color:#efcb79;background:#5b694b;box-shadow:inset 2px 2px #a2ad79,inset -2px -2px #3b4b36,0 5px #d8b76e,0 7px #302b22}
+.trading-post.pixel-bag .trade-goods:hover{background:#667752;transform:none}
+.trading-post.pixel-bag .trade-goods strong{font-family:Zpix,sans-serif;font-weight:400;font-size:12px}
+.trading-post.pixel-bag .goods-art{display:grid;place-items:center;height:84px}
+.trading-post.pixel-bag .goods-price{display:block;margin:3px 0 0;padding:4px 8px;background:#e7d8ae;border:1px solid #a18a5a;color:#664c2f;font:12px Zpix,sans-serif;box-shadow:0 2px #2e362b}
+.trading-post.pixel-bag .goods-price small{font:12px Zpix,sans-serif;color:#796b4b}
+.trading-post.pixel-bag .trade-inspect{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;border:3px solid #3e3529;background:#e8dfbf;color:#394332;box-shadow:0 0 0 2px #b9a16b,inset 3px 3px #fff2ce,inset -3px -3px #c0b48e}
+.trading-post.pixel-bag .trade-inspect h3{font-size:24px;line-height:1.5;margin:8px 0 10px}
+.trading-post.pixel-bag .trade-inspect p{font-size:12px;line-height:2;color:#625c43;margin:0 0 8px;min-height:40px}
+.trading-post.pixel-bag .trade-owned{font:12px Zpix,sans-serif;color:#86754f}
+.trading-post.pixel-bag .trade-quantity{gap:18px;margin:16px 0}
+.trading-post.pixel-bag .trade-quantity button{border:2px solid #5b5139;border-radius:0;background:#cbbd8b;box-shadow:inset 2px 2px #fff0bf,inset -2px -2px #9d8b60;color:#3e4b36}
+.trading-post.pixel-bag .trade-quantity span,.trading-post.pixel-bag .trade-quantity small{font:12px Zpix,sans-serif;color:#686143}
+.trading-post.pixel-bag .trade-quantity b{font-size:24px}
+.trading-post.pixel-bag .trade-footer{color:#ffe8ad;margin-top:14px;min-height:18px;font-size:12px}
+@media(max-width:560px){.trading-post.pixel-bag .trade-layout{grid-template-columns:minmax(124px,1fr) minmax(154px,1.2fr);gap:10px}.trading-post.pixel-bag .trade-shelf{grid-template-columns:1fr;padding:8px;gap:10px}.trading-post.pixel-bag .trade-goods{padding:5px 2px;gap:0}.trading-post.pixel-bag .goods-art{height:48px}.trading-post.pixel-bag .goods-art .supply-bitmap{width:48px;height:48px}.trading-post.pixel-bag .goods-price{padding:2px 4px;font-size:12px}.trading-post.pixel-bag .goods-price small{font-size:10px}.trading-post.pixel-bag .trade-inspect{padding:10px 6px}.trading-post.pixel-bag .trade-inspect h3{font-size:18px}.trading-post.pixel-bag .trade-quantity{gap:8px}.trading-post.pixel-bag .trade-quantity button{width:28px;height:28px}}
+@media(max-height:650px) and (min-width:561px){.rpg-shell .trading-post.pixel-bag{padding:16px 22px}.trading-post.pixel-bag .partner-heading{margin-bottom:12px;padding-bottom:10px;min-height:48px}.trading-post.pixel-bag .goods-art{height:60px}.trading-post.pixel-bag .goods-art .supply-bitmap{width:60px;height:60px}.trading-post.pixel-bag .trade-inspect{padding:10px}.trading-post.pixel-bag .item-hero,.trading-post.pixel-bag .item-hero .supply-bitmap{height:96px;width:96px}.trading-post.pixel-bag .trade-quantity{margin:8px 0}}

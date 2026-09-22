@@ -1,0 +1,29 @@
+/* 队伍统一像素框架；图鉴保留纸张、书脊与翻页几何，只统一装订和控件。 */
+.rpg-shell .roster-window.pixel-bag{width:min(960px,96%);height:min(730px,90dvh);overflow:hidden}
+.roster-window.pixel-bag .partner-heading{padding-bottom:12px;margin-bottom:14px;min-height:56px}
+.roster-window.pixel-bag .roster-tabs{gap:8px;border-bottom:2px solid #bc9e67;margin-bottom:16px}
+.roster-window.pixel-bag .roster-tabs button{padding:9px 14px;border:2px solid #3c3227;border-bottom:0;background:#4b4433;color:#cdbf99;box-shadow:inset 1px 1px #8e7c54;font-size:16px;clip-path:polygon(6px 0,calc(100% - 6px) 0,100% 6px,100% 100%,0 100%,0 6px)}
+.roster-window.pixel-bag .roster-tabs button[aria-pressed=true]{background:#e4d8ae;color:#3e4b36;box-shadow:inset 2px 2px #fff0c8}
+.roster-window.pixel-bag .partner-roster{grid-template-columns:1fr;gap:9px;padding:8px;border:2px solid #ad9565;background:#3c4940;box-shadow:inset 3px 3px #2a372f;scrollbar-color:#b19b65 #374137!important}
+.roster-window.pixel-bag .partner-slot{padding:10px 8px;border:2px solid #778266;border-radius:0;background:#53634e;color:#f1e6c0;box-shadow:inset 2px 2px #768568,inset -2px -2px #394934}
+.roster-window.pixel-bag .partner-slot.selected{background:#69724d;border-color:#ebce87;box-shadow:inset 3px 0 #d5b76b,inset -2px -2px #4b563a}
+.roster-window.pixel-bag .partner-meta strong{font-size:16px}.roster-window.pixel-bag .partner-meta small,.roster-window.pixel-bag .card-meter-label{color:#d1d7b7;font-size:12px;line-height:1.4}
+.roster-window.pixel-bag .partner-hp{border-radius:0;height:6px;border:1px solid #293a30;background:#2f3d33}
+.roster-window.pixel-bag .partner-hp i{border-radius:0;background:repeating-linear-gradient(90deg,#99c58a 0 12px,#6e9a69 12px 13px)}
+.roster-window.pixel-bag .card-xp i{background:repeating-linear-gradient(90deg,#80bfd1 0 12px,#5998b0 12px 13px)}
+.rpg-shell .roster-window.pixel-bag .partner-detail{padding:14px;border:2px solid #b9a16b;border-radius:0;background:#e8dfbf;box-shadow:inset 3px 3px #fff0ce,inset -3px -3px #c1b48c;color:#3c4c38}
+.roster-window.pixel-bag .partner-detail p{color:#706b4d;line-height:1.9;font-size:12px}
+.roster-window.pixel-bag .partner-detail h3{font-size:24px;margin-bottom:12px}.roster-window.pixel-bag .partner-detail h4{font-size:12px;border-bottom:1px solid #b9ab7c;padding-bottom:8px}
+.roster-window.pixel-bag .element-label{border-radius:0;box-shadow:inset 1px 1px #fff3;font-size:12px;padding:5px 8px}
+.roster-window.pixel-bag .partner-tool{border-radius:2px;border:2px solid #6b7650;background:#d6d7ad;box-shadow:inset 2px 2px #faf0c5,inset -2px -2px #a0ab7a}
+.roster-window.pixel-bag .partner-tool.is-lead{background:#5b7955;color:#ffe2a1;box-shadow:inset 2px 2px #91a577,inset -2px -2px #354b35}
+.roster-window.pixel-bag .move-pair{display:grid;grid-template-columns:1fr;gap:0}.roster-window.pixel-bag .move-pair>span{border:0;border-bottom:1px solid #c4b78c;background:none;padding:9px 4px;font-size:16px}.roster-window.pixel-bag .move-pair small{font:12px Zpix,sans-serif;color:#797452;line-height:1.7;margin-top:6px}
+.roster-window.pixel-bag .roster-empty{color:#d5d4b1;font-size:12px}
+.dex-book-shell .book-heading>span,.dex-book-shell .page-content>header,.dex-book-shell .page-content>header b,.dex-book-shell .book-element,.dex-book-shell .page-content p,.dex-book-shell .book-skill,.dex-book-shell .page-content footer,.dex-book-shell .page-content footer b,.dex-book-shell .book-counter,.dex-book-shell .book-directory,.dex-book-shell .book-directory button{font-family:Zpix,sans-serif;font-weight:400;font-style:normal}
+.dex-book-shell .page-content>header,.dex-book-shell .page-content footer{font-size:10px}.dex-book-shell .page-content p{font-size:12px;line-height:1.8}
+.dex-book-shell .book-cover{border-radius:8px 10px 10px 8px;border-color:#c3a366;box-shadow:inset 0 0 0 3px #203e2e,inset 0 0 0 5px #ae955d,0 5px #182f24,0 7px #9e8955,0 10px #182e24,0 20px 26px #0007}
+.dex-book-shell .book-close{border:2px solid #a58f59;border-radius:2px;background:#34553e;box-shadow:inset 2px 2px #66815a,inset -2px -2px #1b3929;font:28px Zpix,sans-serif}
+.dex-book-shell .book-controls{gap:16px}.dex-book-shell .book-controls button{border:1px solid #ac965f;border-radius:2px;background:#304d38;box-shadow:inset 1px 1px #738261,0 3px #192d22;font:16px Zpix,sans-serif;padding:7px 12px;min-height:32px}
+.dex-book-shell .book-controls button:hover{background:#486447;border-radius:2px}.dex-book-shell .book-counter{font-size:12px}
+.dex-book-shell .book-directory{border-radius:2px;border:3px solid #8e7b4f;box-shadow:inset 0 0 0 2px #fff1ca,0 8px #182e2466}.dex-book-shell .book-directory button{font-size:12px;line-height:1.8}
+@media(max-width:640px){.rpg-shell .roster-window.pixel-bag{padding:16px 12px;width:96%}.roster-window.pixel-bag .partner-heading h2{font-size:20px;padding:8px 12px}.roster-window.pixel-bag .roster-tabs button{font-size:12px;padding:8px}.roster-window.pixel-bag .partner-roster{padding:5px}.roster-window.pixel-bag .partner-slot{padding:6px 4px}.roster-window.pixel-bag .partner-meta small,.roster-window.pixel-bag .card-meter-label{font-size:10px}.rpg-shell .roster-window.pixel-bag .partner-detail{padding:8px}.roster-window.pixel-bag .element-label{font-size:10px}.roster-window.pixel-bag .partner-detail h3{font-size:20px}.roster-window.pixel-bag .move-pair>span{font-size:14px}.roster-window.pixel-bag .move-pair small{font-size:10px}.dex-book-shell .book-controls{gap:10px}}
