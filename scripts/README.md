@@ -17,3 +17,10 @@ npm.cmd run dev -- --port 4190
 ```
 
 另开终端执行所需的 `node scripts/check-*.cjs`。这些脚本的截图统一写入 `assets/qa/<主题>/`，不会进入生产构建或默认 Git 提交范围。
+
+首页回归默认访问 `http://127.0.0.1:4190`，也可以显式指定另一个隔离入口：
+
+```powershell
+$env:RPG_ORIGIN='http://127.0.0.1:4191'
+node scripts\check-title.cjs
+```

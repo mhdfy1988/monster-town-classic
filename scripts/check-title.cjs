@@ -2,11 +2,14 @@
 const {chromium}=require('playwright');
 const path=require('node:path');
 const fs=require('node:fs/promises');
+const origin=(process.env.RPG_ORIGIN??'http://127.0.0.1:4190').replace(/\/$/,'');
 (async()=>{const browser=await chromium.launch({ headless: true, channel: 'chrome' });try{
  const page=await browser.newPage({viewport:{width:1280,height:800}});
- await page.goto('http://127.0.0.1:4190/?qa=1');await page.waitForFunction(()=>window.__rpg);
+ await page.goto(`${origin}/?qa=1`);await page.waitForFunction(()=>window.__rpg);
  const output=path.resolve(__dirname,'../assets/qa/title');await fs.mkdir(output,{recursive:true});
  if(!await page.locator('#title-continue').isDisabled())throw new Error('empty continue');
+ const companions=await page.locator('.title-companion .monster-art').evaluateAll(elements=>elements.map(element=>{const rect=element.getBoundingClientRect();const style=getComputedStyle(element);return {width:rect.width,height:rect.height,opacity:style.opacity,display:style.display}}));
+ if(companions.length!==3||companions.some(item=>item.width<1||item.height<1||item.opacity==='0'||item.display==='none'))throw new Error(`companions invisible: ${JSON.stringify(companions)}`);
  await page.screenshot({path:path.join(output,'title.png')});
  await page.keyboard.press('ArrowDown');
  if(!await page.locator('#title-slots').evaluate(el=>el===document.activeElement))throw new Error('keyboard navigation');
@@ -39,6 +42,6 @@ const fs=require('node:fs/promises');
  await page.reload();await page.waitForFunction(()=>window.__rpg);await page.locator('#title-slots').click();
  if(!await page.locator('[data-slot="1"]').isDisabled())throw new Error('deleted slot revived');
  await page.locator('#slots-back').click();await page.locator('#title-exit').click();await page.getByRole('button',{name:'结束游戏',exact:true}).click();await page.locator('#return-title').click();
- for(const size of [{width:390,height:844},{width:800,height:450}]){await page.setViewportSize(size);await page.screenshot({path:path.join(output,`title-${size.width}.png`)});if(!await page.locator('#title-exit').evaluate(el=>{const r=el.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight&&r.right<=innerWidth;}))throw new Error('exit invisible');}
+ for(const size of [{width:390,height:844},{width:800,height:450}]){await page.setViewportSize(size);await page.screenshot({path:path.join(output,`title-${size.width}.png`)});const visible=await page.locator('#title-exit').evaluate(el=>{const r=el.getBoundingClientRect();return {ok:r.width>0&&r.height>0&&r.top>=-1&&r.left>=-1&&r.right<=innerWidth+1&&r.bottom<=innerHeight+1,rect:{top:r.top,left:r.left,right:r.right,bottom:r.bottom,width:r.width,height:r.height},viewport:{width:innerWidth,height:innerHeight}}});if(!visible.ok)throw new Error(`exit invisible at ${size.width}x${size.height}: ${JSON.stringify(visible)}`);}
  console.log('PASS: new, continue, independent slots, delete/cancel, reload, exit; headless only');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
