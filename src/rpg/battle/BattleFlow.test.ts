@@ -15,7 +15,7 @@ describe('战斗流程控制器', () => {
     expect([save.x,save.y]).toEqual([townRescue.x,townRescue.y]);
     expect(npcs.some(n=>n.x===save.x&&n.y===save.y)).toBe(false);expect(ally.hp).toBe(maxHp(ally));
   });
-  it('捕捉成功统一更新库存、队伍、图鉴和结束事件', async () => {
+  it('捕捉成功更新库存、队伍与图鉴，并为原随行队伍结算经验', async () => {
     const save=newGame(),ally=makeMonster(0,5),enemy=makeMonster(1,3);save.team=[ally];save.balls=1;enemy.hp=1;
     const session=new BattleSession();session.start(enemy,false,'相遇');
     const finish=vi.fn(),pauseLog=vi.fn(async(_text:string,_feedback?:BattleFeedback)=>{});
@@ -23,8 +23,9 @@ describe('战斗流程控制器', () => {
     await flow.turn('capture');
     expect(save.balls).toBe(0);expect(save.team).toContainEqual(enemy);expect(save.caught).toContain(enemy.species);
     expect(save.dexForms).toContain('agnite:0');
+    expect(ally.xp).toBe(39);expect(save.team[1].xp).toBe(0);
     expect(pauseLog.mock.calls.map(([text])=>text)).toEqual(['你掷出了捕捉球！','……摇了一下。','……又摇了一下。','……最后一下。','咔哒！捕捉球锁定了。']);
-    expect(pauseLog).toHaveBeenLastCalledWith('咔哒！捕捉球锁定了。',{kind:'capture',phase:'success'});expect(finish).toHaveBeenCalledOnce();
+    expect(pauseLog).toHaveBeenLastCalledWith('咔哒！捕捉球锁定了。',{kind:'capture',phase:'success'});expect(finish).toHaveBeenCalledWith(expect.stringContaining('捕捉成功'),[expect.objectContaining({monster:ally,xpGain:39})]);
   });
 
   it('捕捉失败按接近成功的程度展示摇晃和挣脱，再进入敌方回合',async()=>{

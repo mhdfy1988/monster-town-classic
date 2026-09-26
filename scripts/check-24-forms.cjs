@@ -16,7 +16,7 @@ const formId=(species,form)=>String(form*8+[4,1,2,5,7,3,6,8][species]).padStart(
 
   // 每个种族三阶都必须在队伍中使用各自编号图，不得回落到旧图集。
   for(let species=0;species<8;species++){
-    await page.evaluate(async species=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.close();r.atTitle=false;r.save=m.newGame();r.save.team=[0,1,2].map((form,i)=>({...m.makeMonster(species,[5,12,22][i]),form}));r.teamMenu();},species);
+ await page.evaluate(async species=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.close();r.save=m.newGame();r.save.team=[0,1,2].map((form,i)=>({...m.makeMonster(species,[5,12,22][i]),form}));r.teamMenu();},species);
     await page.waitForTimeout(80);
     for(let form=0;form<3;form++){
       const id=formId(species,form);
@@ -27,7 +27,7 @@ const formId=(species,form)=>String(form*8+[4,1,2,5,7,3,6,8][species]).padStart(
   // 每个形态分别验证敌方正面、我方背面与战场边界。
   for(let species=0;species<8;species++)for(let form=0;form<3;form++){
     const id=formId(species,form);
-    await page.evaluate(async({species,form})=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.close();r.enemy=null;r.atTitle=false;const mon={...m.makeMonster(species,[5,12,22][form]),form};r.save=m.newGame();r.save.team=[{...mon}];r.startBattle({...mon},false);},{species,form});
+ await page.evaluate(async({species,form})=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.close();r.enemy=null;const mon={...m.makeMonster(species,[5,12,22][form]),form};r.save=m.newGame();r.save.team=[{...mon}];r.startBattle({...mon},false);},{species,form});
     await page.waitForTimeout(40);
     if(!await page.locator(`.enemy-monster image[href*="/forms/${id}.png"]`).count())throw Error(`enemy missing ${id}`);
     if(!await page.locator(`.ally-monster image[href*="/forms/${id}.png"]`).count())throw Error(`ally missing ${id}`);

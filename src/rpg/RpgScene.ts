@@ -19,7 +19,7 @@ import { battleScreenView } from './ui/battleView';
 import { BattleSession, type BattleMenu } from './battle/BattleSession';
 import { bagView, shopView } from './ui/inventoryViews';
 import { rosterView, swapChooserView, type RosterTab } from './ui/rosterView';
-import { endedScreenView, saveSlotsView, titleScreenView } from './ui/titleViews';
+import { saveSlotsView } from './ui/titleViews';
 import { battleResultsView } from './ui/battleResultsView';
 import { interactionAt, mapTransitionAt } from './content/interactions';
 import { BattleFlow, type BattleAction } from './battle/BattleFlow';
@@ -34,11 +34,12 @@ import { questView } from './ui/questView';
 import type { BattleKind } from './battle/BattleSession';
 import { feedbackDuration, type BattleFeedback } from './battle/battleFeedback';
 import { captureEffectView, DEFAULT_CAPTURE_EFFECT_STYLE, hydratePixelCaptureEffect, PIXEL_CAPTURE_THROW_DURATION, resolveCaptureEffectStyle, type CaptureEffectStyle } from './ui/captureEffectView';
-import { battleMusic, mapMusic, TITLE_MUSIC } from './content/audioCues';
+import { battleMusic, mapMusic } from './content/audioCues';
+import type { GameRuntimeBoot } from './runtimeContract';
 
 type Action = UiAction;
 export class RpgScene extends Phaser.Scene {
-  save: Save = newGame();
+  save: Save;
   private hero!: Phaser.GameObjects.Sprite;
   private objects: Phaser.GameObjects.GameObject[] = [];
   private keys!: Record<string, Phaser.Input.Keyboard.Key>;
@@ -63,34 +64,34 @@ export class RpgScene extends Phaser.Scene {
   private saves = new SaveRepository(localStorage);
   private get storageError(){return this.saves.error;} private set storageError(value:string){value?this.saves.fail(value):this.saves.error='';}
   private get activeSlot(){return this.saves.activeSlot;} private set activeSlot(value:number|null){this.saves.activeSlot=value;}
-  private atTitle = true;
   private walkClock = 0;
   private audio = new AudioPlayer();
   private captureEffectStyle: CaptureEffectStyle = DEFAULT_CAPTURE_EFFECT_STYLE;
-  constructor() { super('PocketGrove'); }
+  private readonly boot:GameRuntimeBoot;
+  constructor(boot:GameRuntimeBoot) { super('PocketGrove');this.boot=boot;this.save=structuredClone(boot.save);this.activeSlot=boot.activeSlot; }
   preload() {
     preloadRpgAssets(this);
   }
   create() {
-    const qaParams=new URLSearchParams(location.search),qaPreset=import.meta.env.DEV?qaParams.get('qa'):null;
+    const qaParams=new URLSearchParams(location.search),qaPreset=import.meta.env.DEV?this.boot.qaPreset:null;
     this.captureEffectStyle=resolveCaptureEffectStyle(location.search);
     if(qaPreset)(window as unknown as {__rpg:RpgScene}).__rpg=this;
     this.keys = this.input.keyboard!.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,E,SPACE,ENTER,ESC,T,B,M,ONE,TWO,THREE,FOUR') as typeof this.keys;
     const unlockAudio=()=>this.audio.unlock();window.addEventListener('pointerdown',unlockAudio,{once:true});window.addEventListener('keydown',unlockAudio,{once:true});
-    this.events.once('shutdown',()=>{window.removeEventListener('pointerdown',unlockAudio);window.removeEventListener('keydown',unlockAudio);void this.audio.suspend();});
-    bindGameControls(this.overlay,{close:()=>this.close(),openTeam:()=>this.teamMenu(),openBag:()=>this.bagMenu(),openJournal:()=>this.journal(),openQuests:()=>this.questMenu(),save:()=>{if(!this.enemy&&!this.moving){this.close();if(this.activeSlot===null){this.slotMenu('save');return;}this.persist();this.dialog(this.storageError?'保存失败':'已保存',this.storageError||`进度已保存到存档 ${this.activeSlot!+1}。`);}},returnToTitle:()=>this.returnToTitle(),toggleSettings:()=>this.toggleTravelMenu(),getAudioSettings:()=>this.audio.preferences,toggleMusic:()=>this.audio.toggleMusic(),toggleSfx:()=>{const enabled=this.audio.toggleSfx();if(enabled)this.beep();return enabled;},setMusicVolume:value=>this.audio.setMusicVolume(value),setSfxVolume:value=>this.audio.setSfxVolume(value),resetEscapeKey:()=>this.keys.ESC.reset()});
+    this.events.once('shutdown',()=>{window.removeEventListener('pointerdown',unlockAudio);window.removeEventListener('keydown',unlockAudio);if(qaPreset)delete (window as unknown as {__rpg?:RpgScene}).__rpg;void this.audio.suspend();});
+    bindGameControls(this.overlay,{close:()=>this.close(),openTeam:()=>this.teamMenu(),openBag:()=>this.bagMenu(),openJournal:()=>this.journal(),openQuests:()=>this.questMenu(),save:()=>{if(!this.enemy&&!this.moving){this.close();if(this.activeSlot===null){this.slotMenu();return;}this.persist();this.dialog(this.storageError?'保存失败':'已保存',this.storageError||`进度已保存到存档 ${this.activeSlot!+1}。`);}},returnToTitle:()=>this.returnToTitle(),toggleSettings:()=>this.toggleTravelMenu(),getAudioSettings:()=>this.audio.preferences,toggleMusic:()=>this.audio.toggleMusic(),toggleSfx:()=>{const enabled=this.audio.toggleSfx();if(enabled)this.beep();return enabled;},setMusicVolume:value=>this.audio.setMusicVolume(value),setSfxVolume:value=>this.audio.setSfxVolume(value),resetEscapeKey:()=>this.keys.ESC.reset()});
     if(qaPreset==='town'){
-      this.save=newGame();this.save.map='greenbud-town';this.save.x=34;this.save.y=6;this.atTitle=false;this.drawWorld();this.updateHud();
+      this.save=newGame();this.save.map='greenbud-town';this.save.x=34;this.save.y=6;this.drawWorld();this.updateHud();
     }else if(qaPreset==='forest'||qaPreset==='forest-art'){
       this.save=newGame();this.save.team=[makeMonster(1,8)];this.save.caught=[0,1];this.save.badge=true;this.save.map='windbell-forest';this.save.x=24;this.save.y=14;
-      this.save.story.flags=['ranger-pass','forest-investigation',...(qaPreset==='forest-art'?['forest-route-cleared']:[])];this.save.story.nodeId='chapter-1-wild';acceptSideQuest(this.save,'lost-surveyor');acceptSideQuest(this.save,'dim-glow-moss');this.atTitle=false;this.drawWorld();this.updateHud();
+      this.save.story.flags=['ranger-pass','forest-investigation',...(qaPreset==='forest-art'?['forest-route-cleared']:[])];this.save.story.nodeId='chapter-1-wild';acceptSideQuest(this.save,'lost-surveyor');acceptSideQuest(this.save,'dim-glow-moss');this.drawWorld();this.updateHud();
       if(qaPreset==='forest-art'){this.save.x=24;this.save.y=6;this.drawWorld();}
     }else if(qaPreset==='cave-art'||qaPreset==='cave-entry-art'){
       this.save=newGame();this.save.team=[makeMonster(1,8)];this.save.caught=[0,1];this.save.badge=true;this.save.map='echo-cave';this.save.x=22;this.save.y=11;
-      this.save.story.flags=['ranger-pass','forest-investigation','forest-route-cleared'];this.save.story.nodeId='chapter-1-cave';this.atTitle=false;this.drawWorld();this.updateHud();
+      this.save.story.flags=['ranger-pass','forest-investigation','forest-route-cleared'];this.save.story.nodeId='chapter-1-cave';this.drawWorld();this.updateHud();
       if(qaPreset==='cave-entry-art'){this.save.x=22;this.save.y=27;this.drawWorld();}
     }else if(qaPreset==='battle-fx'){
-      this.save=newGame();this.save.team=[makeMonster(1,9)];this.save.caught=[1];this.save.balls=8;this.atTitle=false;this.drawWorld();this.updateHud();
+      this.save=newGame();this.save.team=[makeMonster(1,9)];this.save.caught=[1];this.save.balls=8;this.drawWorld();this.updateHud();
       const previewEnemy=makeMonster(0,5);previewEnemy.hp=Math.max(1,Math.floor(maxHp(previewEnemy)*.28));this.startBattle(previewEnemy,'wild');
       const phase=qaParams.get('effect');
       const capturePreviews:Record<string,{feedback:BattleFeedback;log:string}>={
@@ -111,41 +112,31 @@ export class RpgScene extends Phaser.Scene {
         }
       }
       if(phase==='effective'){this.battleLog='属性克制！效果拔群！';this.battleView();this.battleEffect({kind:'attack',actor:'ally',element:'fire',amount:28,effective:true});}
-    }else{this.drawWorld();this.updateHud();this.titleScreen();}
+    }else{
+      if(!isValidMapLocation(this.save.map,this.save.x,this.save.y)){this.save.map='greenbud-town';Object.assign(this.save,mapDefinition('greenbud-town').spawn);}
+      this.drawWorld();this.updateHud();
+      if(this.boot.mode==='new')this.dialog('向导 · 小夏','欢迎来到青芽镇！北边蓝色屋顶的研究所正在招募旅行者。先去见博士，领取你的伙伴吧。\n方向键 / WASD 移动，E 或空格与面前的人交谈。');
+    }
     this.game.events.on('blur',()=>this.keys && Object.values(this.keys).forEach(k=>k.reset()));
+    this.boot.onReady();
   }
   private beep(freq=480) { this.audio.beep(freq); }
-  private titleScreen() {
-    this.audio.playMusic(TITLE_MUSIC);
-    this.atTitle=true;this.modal=true;document.getElementById('travel-menu')!.hidden=true;
-    let latest=-1;
-    try{latest=this.saves.latestIndex();}catch{this.storageError='存档读取失败，原数据已保留。请检查浏览器存储权限。';}
-    this.overlay.innerHTML=titleScreenView(latest,this.storageError);
-    this.overlay.querySelector<HTMLButtonElement>('#title-new')!.onclick=()=>this.startNew();
-    this.overlay.querySelector<HTMLButtonElement>('#title-continue')!.onclick=()=>this.loadSlot(latest);
-    this.overlay.querySelector<HTMLButtonElement>('#title-slots')!.onclick=()=>this.slotMenu('load');
-    this.overlay.querySelector<HTMLButtonElement>('#title-exit')!.onclick=()=>this.panel('结束游戏','结束后将停留在关闭提示页。存档仍保存在此浏览器中。',[{label:'结束游戏',run:()=>{void this.audio.suspend();this.overlay.innerHTML=endedScreenView();this.overlay.querySelector<HTMLButtonElement>('#return-title')!.onclick=()=>this.titleScreen();}},{label:'取消',run:()=>this.titleScreen()}]);
-    const menu=this.overlay.querySelector<HTMLElement>('.classic-menu')!;
-    menu.onkeydown=e=>{if(!['ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();const buttons=[...menu.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')];const index=buttons.indexOf(document.activeElement as HTMLButtonElement);buttons[(index+(e.key==='ArrowDown'?1:buttons.length-1)+buttons.length)%buttons.length].focus();};
-    this.overlay.querySelector<HTMLButtonElement>(latest>=0?'#title-continue':'#title-new')!.focus();
-  }
-  private startNew(){this.save=newGame();this.saves.beginUnsaved();this.atTitle=false;this.close();this.drawWorld();this.updateHud();this.dialog('向导 · 小夏','欢迎来到青芽镇！北边蓝色屋顶的研究所正在招募旅行者。先去见博士，领取你的伙伴吧。\n方向键 / WASD 移动，E 或空格与面前的人交谈。');}
-  private loadSlot(index:number){try{const save=this.saves.load(index);if(!save)return;this.save=save;this.atTitle=false;if(!isValidMapLocation(this.save.map,this.save.x,this.save.y)){this.save.map='greenbud-town';Object.assign(this.save,mapDefinition('greenbud-town').spawn);}this.close();this.drawWorld();this.updateHud();}catch{this.panel('读取失败','原存档已保留，未载入游戏。',[{label:'返回标题',run:()=>this.titleScreen()}]);}}
   private returnToTitle(){
     this.close();
     this.panel('返回标题',this.activeSlot===null?'当前旅程尚未保存，离开后将丢失进度。':'保存当前进度后返回标题？',[
-      {label:'保存并返回',run:()=>{if(this.activeSlot===null){this.slotMenu('save',()=>this.titleScreen());return;}this.persist();if(this.storageError){this.panel('保存失败',this.storageError,[{label:'返回',run:()=>this.returnToTitle()}]);return;}this.titleScreen();}},
-      {label:'放弃本次未保存进度',run:()=>this.titleScreen()},
+      {label:'保存并返回',run:()=>{if(this.activeSlot===null){this.slotMenu(()=>this.exitToTitle());return;}this.persist();if(this.storageError){this.panel('保存失败',this.storageError,[{label:'返回',run:()=>this.returnToTitle()}]);return;}this.exitToTitle();}},
+      {label:'放弃本次未保存进度',run:()=>this.exitToTitle()},
       {label:'取消',run:()=>this.close()},
     ]);
   }
-  private slotMenu(mode:'load'|'save',afterSave?:()=>void){
-    let book;try{book=this.saves.readBook();}catch{this.panel('存档不可用','原数据已保留，无法读取存档目录。',[{label:'返回',run:()=>this.atTitle?this.titleScreen():this.close()}]);return;}
+  private exitToTitle(){void this.audio.suspend();this.boot.onReturnToTitle();}
+  private slotMenu(afterSave?:()=>void){
+    let book;try{book=this.saves.readBook();}catch{this.panel('存档不可用','原数据已保留，无法读取存档目录。',[{label:'返回',run:()=>this.close()}]);return;}
     this.modal=true;
-    this.overlay.innerHTML=saveSlotsView(book,mode,this.atTitle,this.activeSlot);
-    this.overlay.querySelector<HTMLButtonElement>('#slots-back')!.onclick=()=>this.atTitle?this.titleScreen():this.close();
-    this.overlay.querySelectorAll<HTMLButtonElement>('[data-slot]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.slot);const execute=()=>{if(mode==='load'){this.loadSlot(i);return;}try{this.saves.write(i,this.save);if(afterSave)afterSave();else this.slotMenu(mode,afterSave);}catch{this.panel('保存失败','原存档未被替换，请检查存储权限。',[{label:'返回',run:()=>this.slotMenu(mode,afterSave)}]);}};if(book.slots[i]&&mode!=='load')this.panel('覆盖存档？',`存档 ${i+1} 的已有进度将被替换。`,[{label:'确认覆盖',run:execute},{label:'取消',run:()=>this.slotMenu(mode,afterSave)}]);else execute();});
-    this.overlay.querySelectorAll<HTMLButtonElement>('[data-delete]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.delete);this.panel('删除存档？',`永久删除存档 ${i+1}，无法撤销。`,[{label:'确认删除',run:()=>{try{this.saves.remove(i);this.slotMenu(mode,afterSave);}catch{this.panel('删除失败','原存档已保留。',[{label:'返回',run:()=>this.slotMenu(mode,afterSave)}]);}}},{label:'取消',run:()=>this.slotMenu(mode,afterSave)}]);});
+    this.overlay.innerHTML=saveSlotsView(book,'save',false,this.activeSlot);
+    this.overlay.querySelector<HTMLButtonElement>('#slots-back')!.onclick=()=>this.close();
+    this.overlay.querySelectorAll<HTMLButtonElement>('[data-slot]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.slot);const execute=()=>{try{this.saves.write(i,this.save);if(afterSave)afterSave();else this.slotMenu(afterSave);}catch{this.panel('保存失败','原存档未被替换，请检查存储权限。',[{label:'返回',run:()=>this.slotMenu(afterSave)}]);}};if(book.slots[i])this.panel('覆盖存档？',`存档 ${i+1} 的已有进度将被替换。`,[{label:'确认覆盖',run:execute},{label:'取消',run:()=>this.slotMenu(afterSave)}]);else execute();});
+    this.overlay.querySelectorAll<HTMLButtonElement>('[data-delete]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.delete);this.panel('删除存档？',`永久删除存档 ${i+1}，无法撤销。`,[{label:'确认删除',run:()=>{try{this.saves.remove(i);this.slotMenu(afterSave);}catch{this.panel('删除失败','原存档已保留。',[{label:'返回',run:()=>this.slotMenu(afterSave)}]);}}},{label:'取消',run:()=>this.slotMenu(afterSave)}]);});
   }
   private drawWorld(){
     const rendered=renderWorld(this,this.save,this.objects,this.hero);
@@ -183,7 +174,7 @@ export class RpgScene extends Phaser.Scene {
           if(Phaser.Input.Keyboard.JustDown(this.keys[key])){this.close();open();return;}
         }
       }
-      if(Phaser.Input.Keyboard.JustDown(this.keys.ESC)&&!this.enemy&&!this.overlay.querySelector('.title-screen')){if(this.atTitle)this.titleScreen();else this.close();}return;
+      if(Phaser.Input.Keyboard.JustDown(this.keys.ESC)&&!this.enemy)this.close();return;
     }
     if(this.moving){const queued=this.movementDirection(true);if(queued)this.bufferedDirection=queued;return;}
     if(this.waitMovementRelease){

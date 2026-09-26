@@ -1,8 +1,8 @@
 const {chromium}=require('playwright');
 (async()=>{const browser=await chromium.launch({ headless: true, channel: 'chrome' });try{
  const page=await browser.newPage({viewport:{width:1280,height:800}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('http://127.0.0.1:4190/?qa=1');await page.waitForFunction(()=>window.__rpg);
- await page.evaluate(async()=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.close();r.atTitle=false;r.save=m.newGame();r.save.team=[m.makeMonster(1,5)];r.save.potions=1;r.save.tonics=2;r.save.remedies=0;r.save.team[0].hp=1;r.bagMenu();});
+ await page.goto('http://127.0.0.1:4190/?qa=runtime');await page.waitForFunction(()=>window.__rpg);
+ await page.evaluate(async()=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.close();r.save=m.newGame();r.save.team=[m.makeMonster(1,5)];r.save.potions=1;r.save.tonics=2;r.save.remedies=0;r.save.team[0].hp=1;r.bagMenu();});
  if(await page.locator('[data-item]').count()!==3)throw Error('zero items visible');
  await page.locator('[data-item="tonics"]').click();if(await page.locator('.item-inspect h3').textContent()!=='力量药剂')throw Error('selection');
  await page.screenshot({path:'assets/qa/book/bag.png'});

@@ -10,7 +10,7 @@ const path=require('node:path');
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   await page.goto('http://127.0.0.1:4190/?qa=battle-frame');
   await page.waitForFunction(()=>window.__rpg);
-  await page.evaluate(async()=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.close();r.atTitle=false;r.save=m.newGame();r.save.team=[{...m.makeMonster(0,12),form:1}];r.startBattle({...m.makeMonster(1,12),form:1},false);});
+ await page.evaluate(async()=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.close();r.save=m.newGame();r.save.team=[{...m.makeMonster(0,12),form:1}];r.startBattle({...m.makeMonster(1,12),form:1},false);});
   await page.waitForTimeout(900);
   const verify=async label=>{const result=await page.evaluate(()=>{const field=document.querySelector('.battle-field').getBoundingClientRect();const screen=document.querySelector('.battle-screen').getBoundingClientRect();const fighters=[...document.querySelectorAll('.battle-field .monster-art')].map(el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom};});return {field:{left:field.left,right:field.right,top:field.top,bottom:field.bottom},screen:{left:screen.left,right:screen.right,top:screen.top,bottom:screen.bottom},fighters,scroll:[document.documentElement.scrollWidth,innerWidth,document.documentElement.scrollHeight,innerHeight]};});
     if(result.fighters.some(r=>r.left<result.field.left-1||r.right>result.field.right+1||r.top<result.field.top-1||r.bottom>result.field.bottom+1))throw Error(`${label}: fighter outside field ${JSON.stringify(result)}`);

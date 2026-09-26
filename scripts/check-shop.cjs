@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');
 (async()=>{const browser=await chromium.launch({ headless: true, channel: 'chrome' });try{
 const page=await browser.newPage({viewport:{width:1280,height:800}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
-await page.goto('http://127.0.0.1:4190/?qa=1');await page.waitForFunction(()=>window.__rpg);
+ await page.goto('http://127.0.0.1:4190/?qa=runtime');await page.waitForFunction(()=>window.__rpg);
 await page.evaluate(async()=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.close();r.save=m.newGame();r.save.money=100;r.save.potions=0;r.shop();});
 await page.locator('[data-product="potions"]').click();await page.locator('#trade-more').click();
 await page.screenshot({path:'assets/qa/book/shop.png'});await page.locator('#trade-buy').click();

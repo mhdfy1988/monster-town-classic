@@ -8,7 +8,7 @@ const fs = require('node:fs/promises');
     const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
     const output = path.resolve(__dirname, '../assets/qa/dialogs');
     await fs.mkdir(output, { recursive: true });
-    await page.goto('http://127.0.0.1:4190/?qa=1');
+ await page.goto('http://127.0.0.1:4190/?qa=runtime');
     await page.waitForFunction(() => window.__rpg);
     for (const name of ['bag', 'shop', 'team', 'journal', 'dialog']) {
       await page.evaluate(async (name) => {

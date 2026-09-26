@@ -2,9 +2,9 @@
 const {chromium}=require('playwright');const path=require('node:path');const fs=require('node:fs/promises');
 (async()=>{const browser=await chromium.launch({ headless: true, channel: 'chrome' });try{
 const page=await browser.newPage({viewport:{width:1280,height:800}}),output=path.resolve(__dirname,'../assets/qa/evolution');await fs.mkdir(output,{recursive:true});
-await page.goto('http://127.0.0.1:4190/?qa=1');await page.waitForFunction(()=>window.__rpg);
+ await page.goto('http://127.0.0.1:4190/?qa=runtime');await page.waitForFunction(()=>window.__rpg);
 for(let form=0;form<3;form++){
- await page.evaluate(async form=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.close();r.enemy=null;r.save=m.newGame();r.save.team=[{...m.makeMonster(1,[5,12,22][form]),form}];r.save.caught=[1];r.atTitle=false;r.startBattle({...r.save.team[0]},false);await Promise.all(['001','009','017'].map(id=>new Promise((resolve,reject)=>{const img=new Image();img.onload=resolve;img.onerror=reject;img.src=`/assets/creatures-v2/forms/${id}.png`;})));},form);
+ await page.evaluate(async form=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.close();r.enemy=null;r.save=m.newGame();r.save.team=[{...m.makeMonster(1,[5,12,22][form]),form}];r.save.caught=[1];r.startBattle({...r.save.team[0]},false);await Promise.all(['001','009','017'].map(id=>new Promise((resolve,reject)=>{const img=new Image();img.onload=resolve;img.onerror=reject;img.src=`/assets/creatures-v2/forms/${id}.png`;})));},form);
  await page.waitForTimeout(800);await page.screenshot({path:path.join(output,`battle-stage-${form+1}.png`)});
  if(!await page.evaluate(()=>{const field=document.querySelector('.battle-field').getBoundingClientRect();return [...document.querySelectorAll('.battle-field .monster-art')].every(el=>{const r=el.getBoundingClientRect();return r.left>=field.left&&r.right<=field.right&&r.top>=field.top&&r.bottom<=field.bottom;});}))throw new Error('fighter outside field');
 }

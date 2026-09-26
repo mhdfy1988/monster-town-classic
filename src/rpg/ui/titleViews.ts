@@ -20,6 +20,10 @@ export function endedScreenView() {
   return '<section class="title-screen classic-title ended-screen"><h1>旅途暂歇</h1><p>现在可以安全关闭此标签页。</p><button class="rpg-action" id="return-title">返回标题</button></section>';
 }
 
+export function loadingScreenView() {
+  return '<section class="title-screen classic-title title-loading" aria-live="polite"><div class="title-vignette" aria-hidden="true"></div><div class="title-pixel-noise" aria-hidden="true"></div><div class="loading-emblem" aria-hidden="true"><span></span></div><small>POCKET GROVE</small><h1>正在整理行装</h1><p>地图与伙伴将在准备完成后出现。</p></section>';
+}
+
 export function saveSlotsView(book: SlotBook, mode: 'load'|'save', atTitle: boolean, activeSlot: number | null) {
   return `<div class="modal-shade"><section class="rpg-panel save-panel"><header class="partner-heading"><h2>${mode==='save'?'保存游戏':'存档管理'}</h2><button class="rpg-action" id="slots-back">返回</button></header><div class="save-list">${book.slots.map((slot,index)=>`<article class="save-row"><div class="save-number">0${index+1}</div><div class="save-summary"><h3>存档 ${index+1} ${!atTitle&&index===activeSlot?'<small>当前旅程</small>':''}</h3>${slot?`<p>${mapDefinition(slot.data.map).name} · 图鉴 ${slot.data.caught.length}/${species.length} · ${slot.data.badge?'已获徽章':'旅途中'}</p><div class="save-party">${slot.data.team.map(monster=>portrait(monster)).join('')||'<span>尚未领取伙伴</span>'}</div><time>${new Date(slot.updated).toLocaleString('zh-CN')}</time>`:'<p>空存档位</p>'}</div><div class="save-actions"><button class="rpg-action" data-slot="${index}" ${!slot&&mode==='load'?'disabled':''}>${mode==='save'?'保存到这里':'读取存档'}</button>${slot?`<button class="rpg-action delete-slot" data-delete="${index}">删除</button>`:''}</div></article>`).join('')}</div><p class="save-note">存档保存在此浏览器中；清除网站数据会丢失进度。</p></section></div>`;
 }

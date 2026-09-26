@@ -15,7 +15,7 @@ const path=require('node:path');
     const r=window.__rpg;
     const model=await import('/src/rpg/model.ts');
     const progress=await import('/src/rpg/battleProgress.ts');
-    r.close();r.atTitle=false;r.save=model.newGame();
+ r.close();r.save=model.newGame();
     const fire=model.makeMonster(1,9);fire.xp=100;
     const earth=model.makeMonster(2,2);earth.xp=18;
     r.save.team=[fire,earth,model.makeMonster(5,5),model.makeMonster(0,6),model.makeMonster(7,4)];

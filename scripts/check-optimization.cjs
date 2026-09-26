@@ -4,8 +4,8 @@ const fs=require('node:fs/promises'),path=require('node:path');
 (async()=>{const browser=await chromium.launch({ headless: true, channel: 'chrome' });try{
  const page=await browser.newPage({viewport:{width:1280,height:800}}),out=path.resolve(__dirname,'../assets/qa/optimization');await fs.mkdir(out,{recursive:true});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('http://127.0.0.1:4190/?qa=1');await page.waitForFunction(()=>window.__rpg);
- async function seed(form=2){await page.evaluate(async form=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.enemy=null;r.close();r.atTitle=false;r.save=m.newGame();r.save.team=[{...m.makeMonster(4,22),form},m.makeMonster(0,15)];r.save.caught=[4,0];r.save.team.forEach(x=>m.unlockForm(r.save,x));r.startBattle(m.makeMonster(1,30),false);Math.random=()=>.5;},form);await page.waitForTimeout(750);}
+ await page.goto('http://127.0.0.1:4190/?qa=runtime');await page.waitForFunction(()=>window.__rpg);
+ async function seed(form=2){await page.evaluate(async form=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.enemy=null;r.close();r.save=m.newGame();r.save.team=[{...m.makeMonster(4,22),form},m.makeMonster(0,15)];r.save.caught=[4,0];r.save.team.forEach(x=>m.unlockForm(r.save,x));r.startBattle(m.makeMonster(1,30),false);Math.random=()=>.5;},form);await page.waitForTimeout(750);}
  const command=(name)=>page.getByRole('button',{name,exact:false});
  const ready=()=>page.waitForFunction(()=>!window.__rpg.battleBusy);
  await seed();

@@ -1,5 +1,5 @@
 const {chromium}=require('playwright');
-(async()=>{const browser=await chromium.launch({ headless: true, channel: 'chrome' });try{const page=await browser.newPage({viewport:{width:1280,height:800}});const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:4190/?qa=1');await page.waitForFunction(()=>window.__rpg);
+(async()=>{const browser=await chromium.launch({ headless: true, channel: 'chrome' });try{const page=await browser.newPage({viewport:{width:1280,height:800}});const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:4190/?qa=runtime');await page.waitForFunction(()=>window.__rpg);
 await page.evaluate(async()=>{const r=window.__rpg,m=await import('/src/rpg/model.ts');r.close();r.save=m.newGame();r.save.team=Array.from({length:5},(_,i)=>m.makeMonster(i%3,5));r.save.reserve=[m.makeMonster(3,8)];r.teamMenu();});
 await page.waitForTimeout(400);await page.screenshot({path:'assets/qa/book/team-tabs.png'});
 if(await page.locator('.partner-detail .partner-vitals,.partner-detail .detail-stats,.partner-detail .experience').count())throw Error('duplicate detail stats');

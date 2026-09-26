@@ -31,7 +31,7 @@ export class BattleFlow {
       save.balls--;await this.hooks.pauseLog('你掷出了捕捉球！',{kind:'capture',phase:'throw'});
       const chance=captureChance(enemy),roll=this.random(),captured=roll<chance,shakes=captureShakeCount(roll,chance,captured);
       for(let shake=1;shake<=shakes;shake++)await this.hooks.pauseLog(shake===1?'……摇了一下。':shake===2?'……又摇了一下。':'……最后一下。',{kind:'capture',phase:'shake',shake:shake as 1|2|3});
-      if(captured){await this.hooks.pauseLog('咔哒！捕捉球锁定了。',{kind:'capture',phase:'success'});const caught={...enemy};if(save.team.length<TEAM_LIMIT)save.team.push(caught);else save.reserve.push(caught);if(!save.caught.includes(caught.species))save.caught.push(caught.species);unlockForm(save,caught);this.hooks.finish(`捕捉成功！${monsterName(caught)} ${save.team.includes(caught)?'加入了队伍':'进入了收容箱'}。`);return;}
+      if(captured){await this.hooks.pauseLog('咔哒！捕捉球锁定了。',{kind:'capture',phase:'success'});const growth=awardTeamExperience(save.team,30+enemy.level*3),caught={...enemy};if(save.team.length<TEAM_LIMIT)save.team.push(caught);else save.reserve.push(caught);if(!save.caught.includes(caught.species))save.caught.push(caught.species);unlockForm(save,caught);this.hooks.finish(`捕捉成功！${monsterName(caught)} ${save.team.includes(caught)?'加入了队伍':'进入了收容箱'}。`,growth);return;}
       await this.hooks.pauseLog(`${monsterName(enemy)} 挣脱了捕捉球！`,{kind:'capture',phase:'break'});
     }else if(action==='potion'||action==='tonic'||action==='remedy'){
       const message=useCombatItem(save,ally,this.session.state(ally),action);

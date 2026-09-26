@@ -10,7 +10,7 @@ const fs=require('node:fs/promises'),path=require('node:path');
   await page.goto('http://127.0.0.1:4190/?qa=wild-art');await page.waitForFunction(()=>window.__rpg);
   async function scene(map,x,y,flags=[]){
    await page.evaluate(async({map,x,y,flags})=>{
-    const r=window.__rpg,m=await import('/src/rpg/model.ts');r.close();r.atTitle=false;r.save=m.newGame();
+ const r=window.__rpg,m=await import('/src/rpg/model.ts');r.close();r.save=m.newGame();
     r.save.map=map;r.save.x=x;r.save.y=y;r.save.story.flags=flags;r.drawWorld();r.updateHud();
    },{map,x,y,flags});await page.waitForTimeout(150);
   }

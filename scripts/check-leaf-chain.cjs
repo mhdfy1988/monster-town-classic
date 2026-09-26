@@ -7,11 +7,11 @@ const path=require('node:path');
   const page=await browser.newPage({viewport:{width:1280,height:800}});
   const output=path.resolve(__dirname,'../assets/qa/leaf-chain');
   await fs.mkdir(output,{recursive:true});
-  await page.goto('http://127.0.0.1:4190/?qa=1');
+ await page.goto('http://127.0.0.1:4190/?qa=runtime');
   await page.waitForFunction(()=>window.__rpg);
   await page.evaluate(async()=>{
     const r=window.__rpg,m=await import('/src/rpg/model.ts');
-    r.close();r.atTitle=false;r.save=m.newGame();r.save.caught=[0];
+ r.close();r.save=m.newGame();r.save.caught=[0];
     r.save.team=[0,1,2].map((form,i)=>({...m.makeMonster(0,[5,12,22][i]),form}));
     r.save.dexForms=['budaye:0','budaye:1','budaye:2'];r.teamMenu();
   });

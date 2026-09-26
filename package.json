@@ -15,11 +15,11 @@
     "test": "vitest run",
     "check:assets": "node scripts/check-assets.cjs",
     "qa:deployment": "node scripts/check-deployment.cjs",
+    "qa:title": "node scripts/check-title.cjs",
     "qa:audio": "node scripts/check-audio.cjs",
     "qa:movement-capture": "node scripts/check-movement-capture.cjs"
   },
   "devDependencies": {
-    "gh-pages": "^6.3.0",
     "gh-pages": "^6.3.0",
     "playwright": "^1.63.0",
     "typescript": "~6.0.2",

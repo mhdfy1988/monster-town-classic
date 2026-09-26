@@ -11,7 +11,7 @@ const path=require('node:path');
   await page.waitForFunction(()=>window.__rpg);
   await page.evaluate(async()=>{
     const r=window.__rpg,m=await import('/src/rpg/model.ts');
-    r.close();r.atTitle=false;r.save=m.newGame();
+ r.close();r.save=m.newGame();
     r.save.team=[
       {...m.makeMonster(2,5),form:0},{...m.makeMonster(2,12),form:1},{...m.makeMonster(2,22),form:2},
       {...m.makeMonster(5,12),form:1},{...m.makeMonster(5,22),form:2},

@@ -12,7 +12,7 @@ const path=require('node:path');
   await page.waitForFunction(()=>window.__rpg);
   await page.evaluate(async()=>{
    const r=window.__rpg,m=await import('/src/rpg/model.ts');
-   r.close();r.atTitle=false;r.save=m.newGame();r.drawWorld();r.updateHud();
+ r.close();r.save=m.newGame();r.drawWorld();r.updateHud();
    r.cameras.main.stopFollow();r.cameras.main.setScroll(0,0);
   });
   await page.waitForTimeout(300);await page.screenshot({path:path.join(out,'town-overview.png')});

@@ -8,8 +8,10 @@
 
 ```text
 main.ts
-  └─ rpg/gameApp.ts               游戏壳与 Phaser 启动
-       └─ RpgScene.ts             场景生命周期和用例编排
+  └─ rpg/gameApp.ts               游戏外壳与 title/loading/game 生命周期
+       ├─ ui/TitleController.ts    标题、存档目录与启动请求（无 Phaser）
+       └─ gameRuntime.ts           进入旅程后动态创建 Phaser
+            └─ RpgScene.ts         场景生命周期和用例编排
             ├─ content/           资源清单、章节和内容契约
             ├─ systems/           移动、任务与章节推进等可测试游戏系统
             ├─ world/             世界画面构建
@@ -23,6 +25,8 @@ shared/assetUrl.ts               统一生成遵循 Vite base 的运行资源地
 依赖只能由入口和编排层指向下层。`content`、`systems`、`battle`、`infrastructure` 和领域模块不得反向导入 `RpgScene`；界面组件可以读取领域类型，但不能修改存档或推进剧情。
 
 运行资源只从 `public/assets/` 读取，TypeScript 入口统一通过 `shared/assetUrl.ts` 适配站点根目录和 Pages 项目子路径。`assets/source`、`assets/workbench` 与 `assets/qa` 是本地素材工作区，不得被运行代码引用；详细契约见 [素材库规范](asset-library.md)。早期地图编辑器、旧 `src/game` 原型模块、图块画板、地图生成器和临时纹理生成器均已删除或退出提交范围，不保留为静默回退。
+
+应用生命周期只有 `title → loading → game` 三种状态。`title` 只读取浏览器存档并渲染 HTML 界面，不创建画布；`loading` 动态导入游戏运行包，游戏容器保留尺寸但不可见、不可交互；`game` 在场景报告就绪后才显示画布。返回标题必须销毁 Phaser、场景输入与场景音频，再重新挂载标题控制器；任一时刻最多存在一个游戏实例。
 
 ## 一次探索到战斗的状态流
 
@@ -50,8 +54,8 @@ shared/assetUrl.ts               统一生成遵循 Vite base 的运行资源地
 ## 音频运行时契约
 
 - `infrastructure/AudioPlayer.ts` 是浏览器音频适配层，独立管理背景音乐与游戏音效两条总线；音量、开关保存在 `pocket-grove-audio-v1`，不混入游戏存档。
-- `content/audioCues.ts` 显式声明标题、每张已实现地图和 `wild | trainer | boss` 三类战斗使用的音乐。当前第一版只有探索与战斗两首主题，因此多个场景共用同一资源是明确内容映射，不是加载失败后的静默回退。
-- 浏览器自动播放限制由首次 `pointerdown` 或 `keydown` 统一解锁。地图切换、开战与战斗结束只请求内容映射中的音乐；捕捉、受击和升级事件只播放已经登记的本地短音效。
+- `content/audioCues.ts` 显式声明每张已实现地图和 `wild | trainer | boss` 三类战斗使用的音乐。当前第一版只有探索与战斗两首主题，因此多个游戏场景共用同一资源是明确内容映射，不是加载失败后的静默回退；标题、存档管理和结束提示保持静音。
+- 浏览器自动播放限制由进入游戏后的首次 `pointerdown` 或 `keydown` 解锁。地图切换、开战与战斗结束只请求内容映射中的音乐；捕捉、受击和升级事件只播放已经登记的本地短音效。
 - 运行时只加载 `public/assets/audio/` 成品，不调用 ACE-Step、jsfxr 或任何在线生成服务。新增音频时必须同时更新内容映射、资源说明、资源门禁和音频实景回归。
 
 后续制作每章时按以下顺序推进：
@@ -68,4 +72,4 @@ shared/assetUrl.ts               统一生成遵循 Vite base 的运行资源地
 - 主线进度继续由稳定剧情标记推导，避免维护第二份主线游标；支线状态使用 `Save.sideQuests` 持久化，接受、推进、结算必须通过任务系统并保持奖励幂等。
 - 后续地图继续通过现有 `MapDocument → RuntimeMapDefinition` 适配层接入；如将来确实需要制作工具，应作为独立工具项目消费这份明确协议，不再把编辑器界面混入游戏入口。
 - 剧情、正式地名和首领动机已经形成第一版设计；`campaign.ts` 中未标记为 `implemented` 的地图和首领仍只是可验证规划，不属于当前可玩内容。
-- 主游戏包目前仍包含 Phaser，生产构建会提示单块超过 500 kB；这不影响运行，后续在回声洞穴引入独立资源组时再按场景边界评估拆包。
+- 首页主包不再包含 Phaser；游戏运行时已拆成进入旅程后才请求的独立包。运行包仍超过 500 kB，当前为非阻断构建提示，后续新增章节资源组时再按地图或场景边界继续拆分。

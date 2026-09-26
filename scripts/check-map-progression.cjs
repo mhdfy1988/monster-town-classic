@@ -14,7 +14,7 @@ const path = require('node:path');
     await page.waitForFunction(()=>window.__rpg);
     const locked=await page.evaluate(async()=>{
       const r=window.__rpg,m=await import('/src/rpg/model.ts'),i=await import('/src/rpg/content/interactions.ts');
-      r.close();r.atTitle=false;r.save=m.newGame();r.save.team=[m.makeMonster(1,8)];r.save.x=34;r.save.y=3;r.drawWorld();r.updateHud();
+ r.close();r.save=m.newGame();r.save.team=[m.makeMonster(1,8)];r.save.x=34;r.save.y=3;r.drawWorld();r.updateHud();
       return i.mapTransitionAt(r.save);
     });
     if(locked!==null)throw new Error('未取得通行标记时北门不应开放');

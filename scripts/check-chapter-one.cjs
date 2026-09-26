@@ -14,7 +14,7 @@ const path = require('node:path');
     await page.waitForFunction(()=>window.__rpg);
     await page.evaluate(async()=>{
       const r=window.__rpg,m=await import('/src/rpg/model.ts');
-      r.close();r.atTitle=false;r.save=m.newGame();r.save.team=[m.makeMonster(1,30),m.makeMonster(0,12)];
+ r.close();r.save=m.newGame();r.save.team=[m.makeMonster(1,30),m.makeMonster(0,12)];
       r.save.caught=[0,1];r.save.badge=true;r.save.story.flags=['ranger-pass','forest-route-cleared'];r.save.story.nodeId='chapter-1-wild';
       r.save.map='windbell-forest';r.save.x=24;r.save.y=3;r.enterCell();
     });
